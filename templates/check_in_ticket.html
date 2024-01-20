@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container text-light">
+    <h2>Check-in Ticket</h2>
+    <form method="POST" action="{{ url_for('check_in_ticket') }}">
+        <div class="form-group  col-4">
+            <label for="ticket_number">Ticket Number:</label>
+            <input type="text" class="form-control mt-3" id="ticket_number" name="ticket_number" value="{{ ticket_number or '' }}" required>
+        </div>
+        <div class="col-8 mt-3">
+            <button type="submit" class="btn btn-primary mt-3 mb-3 me-3" name="action" value="get_info">Get Info</button>
+            <button type="submit" class="btn btn-danger mt-3 mb-3 me-3" name="action" value="check_in">Check-in</button>
+        </div>
+    </form>
+
+    {% if ticket_info %}
+    <div class="ticket-info">
+        <p>Movie Title: {{ ticket_info.MovieTitle }}</p>
+        <p>Cinema Name: {{ ticket_info.CinemaName }}</p>
+        <p>Session Date : <span class="formatted-date">{{ ticket_info.SessionDateTime }}</span></p>
+        <p>Session Time: <span class="session-datetime">{{ ticket_info.SessionDateTime }}</span></p>
+        <p>Seat Number: {{ ticket_info.SeatNumber }}</p>
+        <p>Status: {{ ticket_info.Status }}</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container ">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <h2 class="text-center text-light">Manage {{ UserType }}</h2>
+            <div class="row">
+                <!-- Add New User Button -->
+                <div class="col-md-4 d-flex align-items-center">
+                    <!-- 修改：移除 <UserType> 中的单引号和尖括号 -->
+                    <a href="{{ url_for('add_user', UserType=UserType) }}" class="btn btn-primary mb-3">Add New {{ UserType }}</a>
+                </div>
+                <!-- Search By Name -->
+                <div class="col-md-8 d-flex justify-content-end">
+                    <form action="{{ url_for('manage_user', UserType=UserType) }}" method="get">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="search" placeholder="Search by name">
+                            <button type="submit" class="btn btn-outline-secondary">Search</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="container table-responsive">
+                <table class="transparent-table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th class="text-light" scope="col">ID</th>
+                            <th class="text-light" scope="col">Username</th>
+                            <th class="text-light" scope="col">First Name</th>
+                            <th class="text-light" scope="col">Last Name</th>
+                            <th class="text-light" scope="col">Contact</th>
+                            {% if UserType == 'Customer' %}
+                                <th class="text-light" scope="col">Birthdate</th>
+                            {% else %}
+                                <th class="text-light" scope="col">Department</th>
+                            {% endif %}
+                            <th class="text-light" scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr>
+                                {% if UserType == 'Customer' %}
+                                    <td class="text-light">{{ user.CustomerID }}</td>
+                                {% elif UserType == 'Admin' %}
+                                    <td class="text-light">{{ user.Adminid }}</td>
+                                {% elif UserType == 'Staff' %}
+                                    <td class="text-light">{{ user.StaffID }}</td>
+                                {% elif UserType == 'Manager' %}
+                                    <td class="text-light">{{ user.Managerid }}</td>
+                                {% endif %}
+                            
+                                <td class="text-light">{{ user.Username }}</td>
+                                <td class="text-light">{{ user.First_name }}</td>
+                                <td class="text-light">{{ user.Last_name }}</td>
+                                <td class="text-light">{{ user.Con }}</td>
+                                {% if UserType == 'Customer' %}
+                                    <td class="text-light">{{ user.Birthdate }}</td>
+                                {% else %}
+                                    <td class="text-light">{{ user.Department }}</td>
+                                {% endif %}
+                                <td class="bg-black text-light">
+                                    {% if UserType == 'Customer' %}
+                                        <a href="{{ url_for('edit_user', UserType=UserType, id=user.CustomerID) }}" class="btn btn-sm btn-warning">Update</a>
+                                        <a href="{{ url_for('delete_user', UserType=UserType,id=user.CustomerID,) }}" class="btn btn-sm btn-danger">Delete</a>
+                                    {% elif UserType == 'Admin' %}
+                                        <a href="{{ url_for('edit_user', id=user.Adminid, UserType=UserType) }}" class="btn btn-sm btn-warning">Update</a>
+                                        <a href="{{ url_for('delete_user', id=user.Adminid, UserType=UserType) }}" class="btn btn-sm btn-danger">Delete</a>
+                                    {% elif UserType == 'Manager' %}
+                                        <a href="{{ url_for('edit_user', id=user.Managerid, UserType=UserType) }}" class="btn btn-sm btn-warning">Update</a>
+                                        <a href="{{ url_for('delete_user', id=user.Managerid, UserType=UserType) }}" class="btn btn-sm btn-danger">Delete</a>
+                                    {% elif UserType == 'Staff' %}
+                                        <a href="{{ url_for('edit_user', id=user.StaffID, UserType=UserType) }}" class="btn btn-sm btn-warning">Update</a>
+                                        <a href="{{ url_for('delete_user', id=user.StaffID, UserType=UserType) }}" class="btn btn-sm btn-danger">Delete</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

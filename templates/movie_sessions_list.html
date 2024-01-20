@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container  text-light ">
+    <h2 >{{ movie_title.Title }} -- Sessions List </h2>
+        <div class="col-md-11 d-flex justify-content-end">
+            <a href="{{ url_for('manage_movie_schedule') }}" class="btn btn-primary mb-3">Add New Session</a>
+        </div>
+        <form method="get" action="{{ url_for('movie_sessions', movie_id=movie_id) }}" >
+            <div class="row">
+                
+                <div class="form-group col-md-6">
+                    <input type="text" class="form-control bg-black text-light" name="cinema_name" placeholder="Search by Cinema Name">
+                </div>
+                <div class="form-group col-md-4">
+                    <input type="date" class="form-control bg-black text-light" name="session_date" placeholder="Search by Date">
+                </div>
+                
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary mb-2">Search</button>
+                </div>
+            </div>
+        </form>
+    <div class ="container col-lg-12">
+    <table class="transparent-table" style="width: 100%;">
+        <thead>
+            <tr>
+                <th style="width: 20%;">Cinema Name</th>
+                <th style="width: 30%;">Session Date & Time</th>
+                <th style="width: 26%;">Seat Availability</th>
+                <th style="width: 10%;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for session in sessions %}
+            <tr >
+                <td>{{ session['CinemaName'] }}</td>
+                {% if user_type in ['Admin', 'Manager'] %}
+                <form id="form-{{ session.SessionID }}" method="post" action="{{ url_for('update_session', SessionID=session.SessionID) }}">
+                    <td>
+                        <input type="datetime-local" class="form-control bg-black text-light" name="SessionDateTime" value="{{ session.SessionDateTime }}">
+                    </td>
+                    <td>
+                        <input type="number" class="form-control bg-black text-light" name="SeatAvailability" value="{{ session['SeatAvailability'] }}">
+                    </td>
+                    <td>
+                        <input type="hidden" name="SessionID" value="{{ session.SessionID }}">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
+                <td>
+                <a href="{{ url_for('delete_Session', SessionID=session.SessionID) }}" class="btn btn-danger">Delete</a>
+                </td>
+            {% else %}
+                <td>
+                    <input type="datetime-local" class="form-control bg-black text-light" name="SessionDateTime" value="{{ session.SessionDateTime }}" readonly>
+                </td>
+                <td>
+                    <input type="number" class="form-control bg-black text-light" name="SeatAvailability" value="{{ session['SeatAvailability'] }}"readonly>
+                </td>
+
+            {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+
+{% endblock %}

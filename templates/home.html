@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Magic Movie{% endblock %}
+
+{% block content %}
+
+<div class="now-showing text-secondary">    
+    <div class=" col-md-11 mx-auto">
+        
+        <div id="movieCarousel" class="carousel custom-carousel carousel-fade" data-bs-ride="carousel">
+            <button class="carousel-control-prev" type="button" data-bs-target="#movieCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <ol class="carousel-indicators">
+                <li data-bs-target="#movieCarousel" data-bs-slide-to="0" class="active"></li>
+                <li data-bs-target="#movieCarousel" data-bs-slide-to="1"></li>
+                <li data-bs-target="#movieCarousel" data-bs-slide-to="2"></li>
+                <li data-bs-target="#movieCarousel" data-bs-slide-to="3"></li>
+                <li data-bs-target="#movieCarousel" data-bs-slide-to="4"></li>
+            </ol>
+            <!-- 轮播项目 -->
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="https://static.wixstatic.com/media/34d227_5aa6ba5a12614c70822198ffda5f36af~mv2.jpg" class="d-block w-100 movie-carousel-img " alt="Movie 1">   
+                    <p class="carousel-now-showing">Now Showing</p>
+                    <h2 class="carousel-title">Aquaman and the Lost Kingdom</h2>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://static.wixstatic.com/media/34d227_1b37ddd885b745009ac596d02e0b3aa5~mv2.webp" class="d-block w-100 movie-carousel-img " alt="Movie 2">
+                    <p class="carousel-now-showing">Now Showing</p>
+                    <h2 class="carousel-title">Migration</h2>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://static.wixstatic.com/media/34d227_e4547fc4babd4959b5ac27401b7c40a3~mv2.jpg" class="d-block w-100 movie-carousel-img " alt="Movie 2">
+                    <p class="carousel-now-showing">Now Showing</p>
+                    <h2 class="carousel-title">Wonka</h2>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://static.wixstatic.com/media/34d227_27e3dab4877c4c4386cb18b21e45953c~mv2.jpg" class="d-block w-100 movie-carousel-img " alt="Movie 2">
+                    <p class="carousel-now-showing">Now Showing</p>
+                    <h2 class="carousel-title">Trolls Band Together</h2>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://static.wixstatic.com/media/34d227_936b1da11d9c40cfbcc959dd88b5059e~mv2.jpg" class="d-block w-100" alt="Movie 2">
+                    <p class="carousel-now-showing">Now Showing</p>
+                    <h2 class="carousel-title">Next Goal Wins</h2>
+                </div>
+                
+                <!-- 更多 carousel-item ... -->
+            </div>
+            <button class="carousel-control-next" type="button" data-bs-target="#movieCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

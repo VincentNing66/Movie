@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<body>
+    <div class="container-fluid mt-5 text-light">
+        <a href="{{ url_for('movie_sales_report_page') }}" class="btn btn-outline-light me-5">Movie Sales Report</a> 
+        <a href="{{ url_for('ticket_type_report_page') }}" class="btn btn-outline-light me-5">Ticket Type Report</a>
+        <a href="{{ url_for('top_customers_report_page') }}" class="btn btn-outline-light me-5">Top Customers Report</a>
+        <!--<a href="{{ url_for('sales_report_page') }}" class="btn btn-outline-light me-5">Sales Report</a>-->
+    
+    <div class="container mt-5 text-light">
+        <h2 class="mb-4">Movie Sales Report</h2>
+        <button onclick="goBack()" class="btn btn-secondary">Go Back</button>
+
+        <!-- 电影销售报告图表区域 -->
+        <div class="row">
+            <div class="col-8">
+                <canvas id="movieSalesChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript 部分 -->
+    <script>
+        // 当文档加载完成时
+        document.addEventListener('DOMContentLoaded', function () {
+            // 获取电影销售数据
+            fetch('/movie-sales-report')
+                .then(response => response.json())
+                .then(data => {
+                    // 在这里使用 data 来创建电影销售图表
+                    var ctxMovie = document.getElementById('movieSalesChart').getContext('2d');
+                    var movieSalesChart = new Chart(ctxMovie, {
+                        type: 'bar', // 或 'line'，根据需要选择图表类型
+                        data: {
+                            labels: data.map(item => item.Title),
+                            datasets: [{
+                                label: 'Total Sales',
+                                data: data.map(item => item.TotalSales),
+                                backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                                borderColor: 'rgba(0, 123, 255, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            plugins: {
+                                legend: {
+                                    labels: {
+                                        color: 'white'  // 改变图例标签的颜色为白色
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    ticks: {
+                                        color: 'white'  // 改变 y 轴标签颜色为白色
+                                    }
+                                },
+                                x: {
+                                    ticks: {
+                                        color: 'white'  // 改变 x 轴标签颜色为白色
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
+        });
+    </script>
+</body>
+{% endblock %}

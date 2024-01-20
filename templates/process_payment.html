@@ -1,0 +1,301 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container text-light">
+    <h2>Process Payment</h2>  
+    <div>
+        <h3>{{ session_info.MovieTitle }}</h3>
+        <p>Cinema:{{ session_info.CinemaName }}</p>
+        <p>Date: <span class="formatted-date">{{ session_info.SessionDateTime }}</span></p><p id="weekday"></p>
+        <p>Time : <span class="session-datetime">{{ session_info.SessionDateTime }}</span></p>
+        <!--<p>Selected Seat Number:  {{ selected_seats }}</p>-->
+    </div>
+
+    <form id="payment-form" method="post" action="{{ url_for('process_payment') }}">
+        <div class="mb-3 col-md-4 bg-black text-light">
+            <!-- Gift Card Payment Method -->
+            <div class="payment-method">
+                <input type="checkbox" id="gift-card" name="payment_methods" value="giftcard" >
+                <label for="gift-card">Gift Card Purchase</label>
+                <div id="gift-card-details" class="gift-card-details  col-md-6" style="display: none;">
+                <label for="giftCardNo">Giftcard Number</label>
+                <input type="text" class="form-control bg-black text-light" id="giftCardNo" name="giftCardNo" placeholder="1234 5678 9123 4567">
+                <label for="giftCardAmount">Amount to Apply</label>
+                <input type="text" class="form-control bg-black text-light" id="giftCardAmount" name="giftCardAmount" placeholder="Enter amount" pattern="^\d*(\.\d{0,2})?$" title="Enter a valid amount with up to two decimal places.">
+                Remaining Amount to Pay: <span id="remainingPrice">${{ total_price }}</span>
+                
+            </div>
+
+            </div>
+
+            <!-- Credit Card Payment Method -->
+            <div class="payment-method">
+                <input type="checkbox" id="credit-card" name="payment_methods" value="credit_card" >
+                <label for="credit-card">Credit Card</label>
+                <div id="credit-card-details" class="credit-card-details col-md-6" style="display: none;">
+                    <div class="form-group">
+                        <label for="cardNumber">Card Number</label>
+                        <input type="text" class="form-control bg-black text-light" id="cardNumber" name="cardNumber" placeholder="1234 5678 9123 4567">
+                    </div>
+                    <div class="form-group">
+                        <label for="cardName">Name on Card</label>
+                        <input type="text" class="form-control bg-black text-light" id="cardName" name="cardName" placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="expiryDate">Expiry Date</label>
+                        <input type="month" class="form-control bg-black text-light" id="expiryDate" name="expiryDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="cvv">CVV</label>
+                        <input type="text" class="form-control bg-black text-light" id="cvv" name="cvv" placeholder="123">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Google Pay Payment Method -->
+            <div class="payment-method">
+                <input type="checkbox" id="google-pay" name="payment_methods" value="google_pay" >
+                <label for="google-pay">Google Pay</label>
+            </div>
+            <!-- Bank Pay Payment Method -->
+            <div class="payment-method">
+                <input type="checkbox" id="bank-pay" name="payment_methods" value="bank_pay" >
+                <label for="bank-pay">Internetbank Pay</label>
+            </div>
+            <div id="countdown">Time left: 01:00</div>
+
+            <!-- Total Price -->
+            <div class="total-price">
+                Total: ${{'%.2f'|format( total_price|float) }}
+              
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="submit-button" class="btn btn-primary">Proceed to Payment</button>
+        </div>
+    </form>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // 获取复选框和要切换显示的元素
+    var giftCardCheckbox = document.getElementById('gift-card');
+    var giftCardDetails = document.getElementById('gift-card-details');
+
+    // 检查复选框的初始状态，并相应地更新元素的显示状态
+    toggleGiftCardDetails(giftCardCheckbox.checked);
+
+    // 当复选框的状态改变时，切换元素的显示状态
+    giftCardCheckbox.addEventListener('change', function() {
+        toggleGiftCardDetails(this.checked);
+    });
+
+    function toggleGiftCardDetails(isChecked) {
+        if (isChecked) {
+            giftCardDetails.style.display = 'block';
+        } else {
+            giftCardDetails.style.display = 'none';
+        }
+    }
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const giftCardInput = document.getElementById('giftCardAmount');
+    const totalPrice = parseFloat({{ total_price }});
+    const remainingPriceDisplay = document.getElementById('remainingPrice');
+    const giftCardCheckbox = document.getElementById('gift-card');
+    const creditCardCheckbox = document.getElementById('credit-card');
+    const googlePayCheckbox = document.getElementById('google-pay');
+    const bankPayCheckbox = document.getElementById('bank-pay');
+    const creditCardDetails = document.getElementById('credit-card-details');
+
+
+    function updateRemainingPrice() {
+        let giftCardAmount = parseFloat(giftCardInput.value) || 0;
+        let remainingPrice = giftCardCheckbox.checked ? Math.max(totalPrice - giftCardAmount, 0) : totalPrice;
+        remainingPriceDisplay.textContent = `$${remainingPrice.toFixed(2)}`;
+        document.getElementById('submit-button').disabled = remainingPrice > 0 && !creditCardCheckbox.checked && !googlePayCheckbox.checked && !bnakPayCheckbox.checked;
+    }
+
+    giftCardInput.addEventListener('input', updateRemainingPrice);
+    giftCardCheckbox.addEventListener('change', updateRemainingPrice);
+    bankPayCheckbox.addEventListener('change', updateRemainingPrice);
+    creditCardCheckbox.addEventListener('change', function() {
+        creditCardDetails.style.display = this.checked ? 'block' : 'none';
+        updateRemainingPrice();
+    });
+   
+    
+
+    document.getElementById('payment-form').addEventListener('submit', function(event) {
+        let remainingPrice = parseFloat(remainingPriceDisplay.textContent.replace('$', ''));
+
+        if (remainingPrice > 0 && !creditCardCheckbox.checked && !googlePayCheckbox.checked && !bankPayCheckbox.checked) {
+            event.preventDefault();
+            alert('Please select a valid payment method for the remaining amount.');
+            return;
+        }
+
+        // 处理各种支付方式的逻辑
+        if (giftCardCheckbox.checked) {
+            console.log('Processing gift card payment...');
+        }
+        if (creditCardCheckbox.checked) {
+            console.log('Processing credit card payment...');
+        }
+        if (googlePayCheckbox.checked) {
+            console.log('Processing Google Pay payment...');
+        }
+        if (bankPayCheckbox.checked) {
+            console.log('Processing Bank Pay payment...');
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 获取复选框元素
+    const giftCardCheckbox = document.getElementById('gift-card');
+    const creditCardCheckbox = document.getElementById('credit-card');
+    const googlePayCheckbox = document.getElementById('google-pay');
+    const bankPayCheckbox = document.getElementById('bank-pay');
+
+    // 更新复选框状态的函数
+    function updateCheckboxStates() {
+        // 检查是否选中了Credit Card、Google Pay或Bank Pay
+        const isExclusiveMethodChecked = creditCardCheckbox.checked || googlePayCheckbox.checked || bankPayCheckbox.checked;
+
+        // 如果选中了其中一种，则禁用其他两种
+        creditCardCheckbox.disabled = isExclusiveMethodChecked && !creditCardCheckbox.checked;
+        googlePayCheckbox.disabled = isExclusiveMethodChecked && !googlePayCheckbox.checked;
+        bankPayCheckbox.disabled = isExclusiveMethodChecked && !bankPayCheckbox.checked;
+    }
+
+    // 为复选框添加事件监听器
+    [giftCardCheckbox, creditCardCheckbox, googlePayCheckbox, bankPayCheckbox].forEach(checkbox => {
+        checkbox.addEventListener('change', updateCheckboxStates);
+    });
+
+    // 页面加载时初始化复选框状态
+    updateCheckboxStates();
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Select the checkbox, input fields and the submit button
+    var giftCardCheckbox = document.getElementById('gift-card');
+    var giftCardNumberInput = document.getElementById('giftCardNo');
+    var giftCardAmountInput = document.getElementById('giftCardAmount');
+    var submitButton = document.getElementById('submit-button'); // Replace with your submit button's ID
+
+    // Function to check if the gift card details should be validated
+    function shouldValidateGiftCardDetails() {
+        return giftCardCheckbox.checked;
+    }
+
+    // Function to validate the gift card details
+    function validateGiftCardDetails() {
+        if (shouldValidateGiftCardDetails()) {
+            return giftCardNumberInput.value.trim() !== '' && giftCardAmountInput.value.trim() !== '';
+        }
+        return true;
+    }
+
+    // Event listener for the form submission
+    submitButton.addEventListener('click', function(event) {
+        if (!validateGiftCardDetails()) {
+            event.preventDefault(); // Prevent form submission
+            alert('Please enter gift card details.');
+        }
+    });
+
+    // Event listener for checkbox change
+    giftCardCheckbox.addEventListener('change', function() {
+        if (shouldValidateGiftCardDetails()) {
+            // Show the gift card details section
+            document.getElementById('gift-card-details').style.display = 'block';
+        } else {
+            // Hide the gift card details section
+            document.getElementById('gift-card-details').style.display = 'none';
+        }
+    });
+});
+</script>
+<script>
+
+// 获取日期字符串，例如 "2024-01-02"
+    var dateString = "{{ session_info.SessionDateTime }}";
+
+    // 将日期字符串转换为 JavaScript Date 对象
+    var dateObj = new Date(dateString);
+
+    // 创建一个数组来存储星期几的名称
+    var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+    // 获取日期对应的星期几
+    var weekday = weekdays[dateObj.getDay()];
+
+    // 在HTML中插入星期几的信息
+    document.getElementById("weekday").innerHTML = "" + weekday;
+</script>
+
+    
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var seatsElement = document.getElementById('selected-seats');
+    var seatsText = seatsElement.innerText;
+    
+    // 假设 seatsText 是 "Selected Seat Number: ['A6']"
+    var seats = seatsText.substring(seatsText.indexOf('[') + 1, seatsText.indexOf(']'));
+
+    // 去除引号并处理空数组的情况
+    seats = seats.replace(/['"]+/g, '').trim();
+    if (seats === '') {
+        seats = 'No seats selected';
+    }
+
+    seatsElement.innerText = 'Selected Seat Number: ' + seats;
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 设置倒计时的初始时间为15分钟（以毫秒为单位）
+    var countdownTime = 1 * 60 * 1000; // 15分钟
+
+    // 获取显示倒计时的元素
+    var countdownElement = document.getElementById('countdown');
+
+    // 设置一个计时器来更新倒计时
+    var countdownInterval = setInterval(function() {
+        // 将剩余时间转换为分钟和秒
+        var minutes = Math.floor(countdownTime / 60000);
+        var seconds = Math.floor((countdownTime % 60000) / 1000);
+
+        // 格式化分钟和秒，确保它们始终显示为两位数
+        var formattedMinutes = String(minutes).padStart(2, '0');
+        var formattedSeconds = String(seconds).padStart(2, '0');
+
+        // 更新倒计时元素的文本内容
+        countdownElement.textContent = 'Time left: ' + formattedMinutes + ':' + formattedSeconds;
+
+        // 减少剩余时间
+        countdownTime -= 1000;
+
+        // 当倒计时结束时
+        if (countdownTime < 0) {
+            clearInterval(countdownInterval); // 停止计时器
+            // 显示超时提示
+            alert('Your time to complete this booking has been exceeded. Press OK to Returning to home.');
+            window.location.href = '/home';
+        }
+    }, 1000); // 每隔1秒更新一次倒计时
+
+    // 初始加载时执行一次以显示初始倒计时值
+    countdownInterval();
+});
+</script>
+
+
+{% endblock %}
+
+

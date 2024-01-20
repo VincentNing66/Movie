@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container text-light ">
+    <h2 class="text-center">Promotions List</h2>
+
+    <div class="mb-3 text-light">
+        <a href="{{ url_for('add_promotion') }}" class="btn btn-primary">Add New Promotion</a>
+    </div>
+
+    <div class="container table-responsive col">
+        <table class="transparenttable mt-4">
+            <thead>
+                <tr>
+                    <th style="width:19%" >Description</th>
+                    <th style="width:10%" >Discount Percent</th>
+                    <th style="width:12%" >Start Date</th>
+                    <th style="width:12%" >End Date</th>
+                    <th style="width:15%" >Week Days<br> Sun-Sat:1-7</th>
+                    <th style="width:15%" >Specific Dates</th>
+               
+                    <th style="width:15%" >Image Path</th>
+                    <th style="width:15%" >Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for promotion in promotions %}
+                <tr id="row-{{ promotion.DiscountID }}">
+                    <td><input type="text" class="form-control bg-black text-light" name="description" value="{{ promotion.Description }}"></td>
+                    <td><input type="number" class="form-control bg-black text-light" name="discountPercent" value="{{ promotion.DiscountPercent }}"></td>
+                    <td>
+                    <input type="date" class="form-control bg-black text-light startDate" name="startDate" value="{{ promotion.StartDate }}">
+                    </td>
+                    <td>
+                    <input type="date" class="form-control bg-black text-light endDate" name="endDate" value="{{ promotion.EndDate }}">
+                    </td>
+
+                    <td><input type="text" class="form-control bg-black text-light" name="weekDays" value="{{ promotion.WeekDays }}"></td>
+                    <td><input type="text" class="form-control bg-black text-light" name="specificDates" value="{{ promotion.SpecificDates }}"></td>
+                    <td><input type="text" class="form-control bg-black text-light" name="image_path" value="{{ promotion.image_path }}"></td>
+                    <td>
+                        <button type="button" class="btn btn-primary" onclick="updatePromotion({{ promotion.DiscountID }})">Update</button>
+                        <a href="{{ url_for('delete_promotion', promotion_id = promotion.DiscountID) }}" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function updatePromotion(promotionId) {
+    var row = document.getElementById(`row-${promotionId}`);
+    var inputs = row.getElementsByTagName('input');
+    var formData = new FormData();
+    for (var i = 0; i < inputs.length; i++) {
+        formData.append(inputs[i].name, inputs[i].value);
+    }
+
+    fetch(`/edit-promotion/${promotionId}`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Promotion updated successfully!');
+        } else {
+            alert('Error updating promotion.');
+        }
+    });
+}
+document.addEventListener('DOMContentLoaded', function() {
+  var today = new Date().toISOString().split('T')[0];
+  var startDates = document.querySelectorAll('.startDate');
+  var endDates = document.querySelectorAll('.endDate');
+
+  // 设置每个开始日期的最小值为今天
+  startDates.forEach(function(startDate) {
+    startDate.setAttribute('min', today);
+
+    // 设置对应的结束日期最小值
+    startDate.addEventListener('change', function() {
+      // 假设每个 startDate 紧邻着对应的 endDate
+      var correspondingEndDate = this.closest('tr').querySelector('.endDate');
+      correspondingEndDate.setAttribute('min', this.value);
+    });
+
+    // 如果开始日期已设定，更新对应的结束日期的最小值
+    if (startDate.value) {
+      var correspondingEndDate = startDate.closest('tr').querySelector('.endDate');
+      correspondingEndDate.setAttribute('min', startDate.value);
+    }
+  });
+});
+
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container text-light">
+    <h2>Add Ticket Type</h2>
+    <div class="mb-3 col-lg-6">
+    <form action="{{ url_for('add_tickettype') }}" method="POST">
+        
+        <div class="mb-3 ">
+            <label for="type" class="form-label bg-black text-light">Type</label>
+            <input type="text" class="form-control bg-black text-light" id="type" name="type" required>
+        </div>
+        <div class="mb-3 ">
+            <label for="discountAmount" class="form-label bg-black text-light">Discount Amount</label>
+            <input type="number" class="form-control bg-black text-light" id="discountAmount" name="discountAmount" placeholder="deduct from basic price"required>
+        </div>
+        <div class="row mb-4 mt-4">
+            <div class="col-4">
+                <button type="submit" class="btn btn-primary">Add Ticket Type</button>
+            </div>
+            <div class="col-4">
+                <a href="{{ url_for('manage_tickettype_price') }}" class="btn btn-secondary" style="width: 200px;">Manage Ticket Type</a>
+            </div>
+        </div>
+    </form>
+    </div>
+</div>
+{% endblock %}

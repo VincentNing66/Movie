@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container text-light">
+     <h1> Cinema {{ cinema_name }}</h1>
+
+    
+    <form action="{{ url_for('cinema_detail', cinema_id=cinema_id) }}" method="get">
+        <div class= row>
+            <div class="form-group col-lg-4">
+                <label for="selectedDate">Selected Date:</label>
+                <input type="date" id="selectedDate" name="date" value="{{ date }}"  class="form-control bg-black text-light" required>
+            </div>
+            <div class="col-lg-2">
+                <button type="submit"class="btn btn-primary mt-4">Show Session</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Movie cards with session times -->
+    {% for movie in movies %}
+    <div class="card mb-3 mt-5 bg-black text-light">
+        <div class="row g-0">
+            <div class="col-lg-4">
+                
+                <img src="{{ movie.Image }}" class="movie-image" alt="{{ movie.Title }}">
+            </div>
+            <div class="col-lg-8">
+                <div class="card-body bg-black">
+                    <h5 class="card-title">{{ movie.Title }}</h5>
+                    <p class="card-text">{{ movie.Genre }} - {{ movie.Duration }} mins</p>
+                    <p class="card-text">Release Date: <span class="formatted-date">{{ movie.ReleaseDate }}</span></p>
+                    <p class="card-text">Rating: {{ movie.Rating }}</p>
+                    <p class="card-text">{{ movie.Detail }}</p>
+                </div>
+            </div>
+        </div>   
+        <div class = "row mt-5">
+            {% for session in movie.Sessions %}
+                <div class="mr-4 mb-2 col-lg-3 ">
+                    <a href="{{ url_for('select_seats', SessionID=session.SessionID) }}" class="btn btn-primary me-4"><span class="formatted-date">{{ session.SessionDateTime }}</span>  <span class="session-datetime">{{ session.SessionDateTime }}</span><br> Seats Available<br>{{ session.SeatAvailability }}</a>
+                </div>
+            {% endfor %}
+        </div>
+        
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

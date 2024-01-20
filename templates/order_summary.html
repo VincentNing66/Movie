@@ -1,0 +1,114 @@
+<!-- order_summary.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container text-light">
+    <h1>Order Summary</h1>
+    <p>Movie: {{ summary.movie_title }}</p>
+    <p>Cinema: {{ summary.cinema_name }}</p>
+    <p>Date: <span id="formatted-date">{{ summary.session_datetime }}</span></p><p id="weekday"></p>
+    <p>Time : <span id="session-datetime">{{ summary.session_datetime }}</span></p>
+    <p id="selected-seats">Selected Seat Number:  {{ summary.selected_seats }}</p>
+    <p>Tickets:</p>
+    <ul>
+    {% for ticket_type, quantity in summary.selected_tickets.items() %}
+    <div class="row align-items-center mb-3">
+        <div class="col-md-2">
+            <li>{{ ticket_type }}:
+        </div>
+        <div class="col-md-2">
+            {{ quantity }}</li>
+        </div>
+    </div>
+    {% endfor %}
+    </ul>
+    <p>Selected Promotion: {{ summary.promo_code if summary.promo_code else 'NONE' }}</p>
+    <p>Total Price: ${{ '%.2f'|format(summary.total_price|float) }}</p>
+
+    
+    <form action="{{ url_for('process_payment') }}" method="POST">
+        <!-- Include any necessary hidden fields -->
+        <input type="hidden" name="total_price" value="{{ summary.total_price }}">
+        <button type="submit" class="btn btn-primary">Proceed to Payment</button>
+    </form>
+</div>
+ <script>
+        // 获取日期字符串，例如 "2024-01-02"
+        var dateString = " {{ summary.session_datetime }}";
+
+        // 将日期字符串转换为 JavaScript Date 对象
+        var dateObj = new Date(dateString);
+
+        // 创建一个数组来存储星期几的名称
+        var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+        // 获取日期对应的星期几
+        var weekday = weekdays[dateObj.getDay()];
+
+        // 在HTML中插入星期几的信息
+        document.getElementById("weekday").innerHTML = "" + weekday;
+    </script>
+    
+    <script>
+        function parseDateTime(dateTimeStr) {
+    // 分割日期和时间部分
+    const parts = dateTimeStr.split(' ');
+    const date = parts[0].split('-');
+    const time = parts[1].split(':');
+
+    // 提取日期和时间的各个部分
+    const year = parseInt(date[0], 10);
+    const month = parseInt(date[1], 10) - 1; // JavaScript中月份是从0开始的
+    const day = parseInt(date[2], 10);
+    const hours = parseInt(time[0], 10);
+    const minutes = parseInt(time[1], 10);
+    const seconds = parseInt(time[2], 10);
+
+    // 创建新的日期对象
+    return new Date(year, month, day, hours, minutes, seconds);
+}
+document.addEventListener('DOMContentLoaded', (event) => {
+    const sessionDateTimeStr = document.getElementById('session-datetime').innerText;
+    const sessionDateTime = parseDateTime(sessionDateTimeStr);
+
+    const sessionTime = sessionDateTime.toLocaleTimeString('en-GB', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
+
+    document.getElementById('session-datetime').innerText = sessionTime;
+});
+
+</script>
+
+<script>
+dar isLoggedIn = {{ 'true' if current_user.is_authenticated else 'false' }};
+    
+    var buttons = document.querySelectorAll('button');
+    var proceedButton = Array.from(buttons).find(button => button.textContent.trim() === 'Proceed to Summary');
+
+    if (proceedButton) {
+        proceedButton.addEventListener('click', function(e) {
+            if (!isLoggedIn) {
+                e.preventDefault();
+                alert('Please log in to proceed.');
+            }
+        });
+    
+    }
+
+    // 切换到注册表单
+    document.getElementById('switchToJoin').addEventListener('click', function() {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('joinForm').style.display = 'block';
+    });
+
+    // 切换回登录表单
+    document.getElementById('switchToLogin').addEventListener('click', function() {
+        document.getElementById('loginForm').style.display = 'block';
+        document.getElementById('joinForm').style.display = 'none';
+    });
+});
+</script>
+{% endblock %}

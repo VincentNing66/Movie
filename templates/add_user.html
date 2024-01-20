@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="vh-100 px-0 bg-black text-light" ) >
+    <div class="container " >
+        <div class="row justif y-content-center">
+            <div class="col-md-12">
+                
+                <h2 class="text-center text-light ">Add New {{ UserType }}</h2>
+            <div class="container bg-black text-light mt-4">
+                <div class="row justify-content-center bg-black text-light">
+                    <div class="col-12 col-sm-6 col-md-6 col-lg-6 bg-black text-light">
+                        
+                    <form method="post" class="bg-black text-light" action="{{ url_for('add_user', UserType=UserType)}}">
+
+                        <div class="mb-3">
+                            <input type="text" class="form-control bg-black text-light custom-placeholder" id="Username" name="Username" placeholder="Username*" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="Password" class="form-control bg-black text-light custom-placeholder" id="Password" name="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}"  placeholder="Password*" required required title="Password must be at least 8 characters long, including an uppercase letter, a lowercase letter, a number, and a special character.">
+                        </div>
+                        <div class="mb-3">
+                            
+                            <input type="text" class="form-control bg-black text-light custom-placeholder" id="First_Name" name="First_name" placeholder="First Name*" required>
+                        </div>
+                        <div class="mb-3">
+                            
+                            <input type="text" class="form-control bg-black text-light custom-placeholder" id="Last_Name" name="Last_name" placeholder="Last Name*" required>
+                        </div>
+                        {% if UserType == 'Customer' %}
+                        <div class="mb-3">
+                            <input type="date" class="form-control bg-black text-light custom-placeholder" id="Birthdate" name="Birthdate" placeholder="Birthdate*" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="tel" class="form-control bg-black text-light custom-placeholder" id="con" name="con" pattern="[0-9]{8,15}"  placeholder="Contact*" required title="Contact number must be 8 to 15 digits long.">
+                        </div>
+                        {% elif UserType in ['Admin', 'Manager', 'Staff'] %}
+                        <div class="mb-3">
+                            <input type="tel" class="form-control bg-black text-light custom-placeholder" id="con" name="con" pattern="[0-9]{8,15}"  placeholder="Contact*" required title="Contact number must be 8 to 15 digits long.">
+                        </div>
+                        <div class="mb-3">
+                            
+                            <input type="text" class="form-control bg-black text-light custom-placeholder" id="Department" name="Department" placeholder="Department*" required>
+                        </div>
+                        {% endif %}
+                        <button type="submit" class="btn btn-primary">Add {{ UserType }}</button>
+                    </form>
+                </div>
+            </div>
+</div>
+{% endblock %}

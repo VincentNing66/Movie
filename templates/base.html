@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Magic Movie{% endblock %}</title>
+    <link rel="icon" href="https://static.wixstatic.com/media/34d227_108f9450c1ae43c0a0d4f87b13ce52fd~mv2.jpg">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS link -->
+    <link href="{{ url_for('static', filename='style.css') }}"  rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="/static/css/dashboard.css" rel="stylesheet">
+    
+<body >
+    <div class="container-fluid bg-black">
+    <!-- Top navigation menu -->
+    <header class="navbar sticky-top  flex-md-nowrap p-0 bg-black">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 " href="{{ url_for('home') }}">
+            <img src="https://static.wixstatic.com/media/34d227_108f9450c1ae43c0a0d4f87b13ce52fd~mv2.jpg" alt="Magic Movie Logo" class="img-fluid" style="max-width: 60px;">
+        </a>
+        <ul class="navbar-nav flex-row d-md-none">
+            <li class="nav-item text-nowrap">
+                <button class="nav-link px-3 text-white" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="bi bi-list"></i>
+                </button>
+            </li>
+        </ul>
+        <div class="text-end col-2 ms-auto">
+            {% if 'UserID' in session %}
+                <div class="me-auto d-sm-inline d-md-inline d-lg-inline">
+                       <a href="{{ url_for('logout') }}" class="btn btn-outline-light me-2">
+                            {{ Username }} Logout
+                        </a>
+                    </div>
+                {% endif %}
+                <div class="me-auto d-sm-inline d-md-inline d-lg-inline">
+                    {% if 'UserID' not in session %}
+                        <button class="btn btn-outline-light me-2" type="button" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+                    {% endif %}
+                </div>
+            </div>
+    </header>
+ <div class="container-fluid">
+    <div class="row">
+        <!-- Side navigation menu -->
+        <div class="sidebar  col-md-3 col-lg-2 p-3 ">
+            <div class="offcanvas-md offcanvas-start bg-black" tabindex="-1" id="sidebarMenu"
+                aria-labelledby="sidebarMenuLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title text-light" id="sidebarMenuLabel">Magic Movie</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu"
+                        aria-label="Close"></button>
+                </div>
+        <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
+            <ul class="nav flex-column ms-4">
+                <li class="nav-item">
+                        <div class="d-flex align-items-center text-light">
+                        <i class="bi bi-house-door-fill"></i></i><a href="{{ url_for('home') }}" class="nav-link text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)" aria-current="page"> HOME</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="d-flex align-items-center">
+                        <i class="bi bi-film text-light"></i><a href="{{ url_for('Movie') }}" class="nav-link text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)" aria-current="page"> MOVIES</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="d-flex align-items-center">
+                        <i class="bi bi-ticket-detailed text-light"></i>
+                        <a href="{{ url_for('session_times', date=today) }}"  class="nav-link text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)"> SESSION TIMES</a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-camera-reels text-light"></i><a href="{{ url_for('cinemas')}}" class="nav-link text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)"> CINEMA</a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="d-flex align-items-center">
+                        <i class="bi bi-percent text-light"></i><a href="{{ url_for('promotions')}}" class="nav-link text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)"> PROMOTIONS</a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-gift text-light"></i><a href="{{ url_for('Purchase_giftcard')}}" class="nav-link text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)"> Giftcard Shop</a>
+                        </div>
+                    </li>
+                    <!--
+                    <li>
+                        <a href="#" class="nav-link text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)">MAGIC REWARDS</a>
+                    </li>
+                    -->
+                    <!-- 其他导航项 ... -->
+                    
+
+                    {% if 'UserID' in session %}
+                        <li class="border-top my-3"></li>   
+                        {% if session['UserType'] == 'Customer' %}
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-speedometer2 text-light"></i><li class="nav-item"><a href="{{ url_for('dashboard_customer') }}" class="nav-link text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)">My Dashboard</a></li>
+                            </div>
+                            <div class="d-flex align-items-center text-light">
+                                <i class="bi bi-person-bounding-box text-light"></i><li class="nav-item"><a href="{{ url_for('manage_profile') }}" class="nav-link text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)">My Profile</a></li>
+                            </div>
+                            <div class="d-flex align-items-center text-light">
+                            <i class="bi bi-ticket-detailed "></i><li class="nav-item"><a href="{{ url_for('my_bookings') }}" class="nav-link text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)">My Booking</a></li>
+                            </div>
+                            <div class="d-flex align-items-center text-light">
+                            <i class="bi bi-gift"></i><li class="nav-item"><a href="{{ url_for('my_giftcards') }}" class="nav-link text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)">My Giftcard</a></li>
+                            </div>
+                        {% elif session['UserType'] in ['Staff', 'Manager', 'Admin'] %}
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-speedometer2 text-light"></i><li class="nav-item"><a class="nav-link bg-black text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)" href="{{ url_for('dashboard_all') }}">My Dashboard</a></li>
+                            </div>
+                            <div class="d-flex align-items-center text-light">
+                                <i class="bi bi-person-bounding-box text-light"></i><li class="nav-item "><a class="nav-link bg-black text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)" href="{{ url_for('manage_profile') }}">My Profile</a></li>
+                            </div>
+                            <div class="d-flex align-items-center text-light">
+                                <i class="bi bi-calendar3"></i><li class="nav-item "><a class="nav-link bg-black text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)" href="{{ url_for('session_manage') }}">Manage Sessions</a></li>
+                            </div>
+                            <div class="d-flex align-items-center text-light">
+                                <i class="bi bi-check-square"></i><li class="nav-item"><a class="nav-link bg-black text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)" href="{{ url_for('check_in_ticket') }}">Check IN</a></li>
+                            </div>
+                            
+                            {% if session['UserType'] in ['Manager', 'Admin'] %}
+                            <div class="d-flex align-items-center text-light">
+                            <i class="bi bi-ticket-detailed text-light"></i><li class="nav-item"><a class="nav-link bg-black text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)" href="{{ url_for('admin_bookings') }}">View All Bookings</a></li>
+                            </div>
+                            <div class="d-flex align-items-center text-light">
+                            <i class="bi bi-percent text-light"></i><li class="nav-item"><a class="nav-link bg-black text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)" href="{{ url_for('manage_promotion') }}">Manage Promotions</a></li>
+                            </div>
+                            <div class="d-flex align-items-center text-light">
+                            <i class="bi bi-percent text-light"></i><li class="nav-item"><a class="nav-link bg-black text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)" href="{{ url_for('manage_tickettype_price') }}">Manage Type Discount</a></li>
+                            </div>
+                            
+                            <div class="d-flex align-items-center text-light">
+                            <i class="bi bi bi-tag text-light"></i><li class="nav-item"><a class="nav-link bg-black text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)" href="{{ url_for('manage_movie_price') }}">Manage Ticket Price</a></li>
+                            </div>
+                             <div class="d-flex align-items-center text-light">
+                            <i class="bi bi-graph-up-arrow text-light"></i><li class="nav-item"><a class="nav-link bg-black text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)" href="{{ url_for('dashboard_report') }}">Reports</a></li>
+                            </div>
+                            <div class="d-flex align-items-center text-light">
+                            <i class="bi bi-film"></i><li class="nav-item"><a class="nav-link bg-black text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)" href="{{ url_for('manage_Movie') }}">Manage Movies</a></li>
+                            </div>
+                            <div class="d-flex align-items-center text-light">
+                            <i class="bi bi-people-fill"></i><li class="nav-item text-light"><a class="nav-link bg-black text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)" href="{{ url_for('manage_user', UserType='Staff') }}">Manage Staff</a></li>
+                            </div>
+                            {% endif%}
+                            {% if session['UserType'] in ['Admin'] %}
+                            <div class="d-flex align-items-center text-light">
+                            <i class="bi bi-people"></i><li class="nav-item text-light"><a class="nav-link bg-black text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)" href="{{ url_for('manage_user', UserType='Manager') }}">Manage Manager</a></li>
+                                <!--<li class="nav-item text-light"><a class="nav-link bg-black text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)" href="{{ url_for('manage_user', UserType='Customer') }}">Manage Customer</a></li>-->
+                            </div>
+                        
+                            {% endif%}
+                            <!-- <li class="nav-item text-light"><a class="nav-link bg-black text-light" onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)" href="{{ url_for('manage_user', UserType='Admin') }}">Manage Admins</a></li>-->
+
+                        {% endif %}
+                    {% endif %}
+                </ul>
+            </div> 
+        </div>
+    </div>
+    <div class="modal fade" id="flashMessagesModal" tabindex="-1" aria-labelledby="flashMessagesModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="flashMessagesModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% for message in get_flashed_messages() %}
+                        <div class="alert alert-info">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div> 
+    <div class="col-md-9 ms-sm-auto col-lg-10 main-content">         
+
+        <div class="col-lg-12 col-md-12 mx-auto"> 
+           {% block content %}
+            <!-- 页面特定内容 -->
+            {% endblock %}
+        </div>
+    </div>
+   
+     
+            
+   
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center ">
+        <a href="/" class="mb-3 me-2 mb-md-0  text-light text-decoration-none lh-1">
+            
+        </a>
+        <span class="mb-3 mb-md-1  text-light">&copy; 2023 Company, Inc</span>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+        <a class=" text-light ms-3" href="#"><i class="bi bi-twitter-x"></i>
+        <a class=" text-light ms-3" href="#"><i class="bi bi-instagram"></i>
+        <a class=" text-light ms-3" href="#"><i class="bi bi-facebook"></i>
+        </ul>
+    </footer>
+
+    
+    
+</div>
+
+
+  <!-- Login Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-aside">
+        <div class="modal-content bg-black text-light">
+            <div class="modal-header border-bottom-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <!-- Modal Body -->
+            <div class="modal-body">
+               <!-- Login Form -->
+                <div id="loginForm">
+                    <form action="/login" method="post">
+                        <div class="mb-3 ">
+
+                            <input type="text" class="form-control custom-placeholder" id="Username" name="Username" placeholder="Username"required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="Password" class="form-control custom-placeholder" id="Password" name="Password"  placeholder="Password" required >
+                        </div>
+                        <button type="submit" class="btn btn-danger">SIGN IN</button>
+                    </form>
+                     <p class="mt-3">Not a member? <a href="#" class="text-danger" id="switchToJoin">Join Us</a></p>
+                </div>
+
+
+
+               <!-- Registration Form -->
+                <div id="joinForm" style="display: none;">
+                    <form action="/register" method="post">
+                        <div class="row justify-content-center">
+                            <div class="modal-content bg-black text-light">
+                                <div class="mb-3">
+
+                                    <input type="text" class="form-control custom-placeholder" id="Username" name="Username" placeholder="Username*" required>
+                                </div>
+                                <div class="mb-3">
+                                    <input type="Password" class="form-control custom-placeholder" id="Password" name="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}"  placeholder="Password*" required required title="Password must be at least 8 characters long, including an uppercase letter, a lowercase letter, a number, and a special character.">
+                                </div>
+                                <div class="mb-3">
+                                    <input type="Password" class="form-control custom-placeholder" id="confirm_Password" name="confirm_Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}"  placeholder="Confirm Password*" required required title="Password must be at least 8 characters long, including an uppercase letter, a lowercase letter, a number, and a special character.">
+                                </div>
+                                <div class="mb-3">
+
+                                    <input type="text" class="form-control custom-placeholder" id="FirstName" name="First_name" placeholder="First Name*" required>
+                                </div>
+                                <div class="mb-3">
+
+                                    <input type="text" class="form-control custom-placeholder" id="LastName" name="Last_name" placeholder="Last Name*" required>
+                                </div>
+                                <div class="mb-3">
+
+                                    <input type="date" class="form-control custom-placeholder" id="Birthdate" name="Birthdate" placeholder="Birthdate*" required>
+                                </div>
+                                <div class="mb-3">
+
+                                    <input type="tel" class="form-control custom-placeholder" id="con" name="con" pattern="[0-9]{8,15}"  placeholder="Contact*" required title="Contact number must be 8 to 15 digits long.">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 其他 Customer 表需要的字段 -->
+                        <button type="submit" class="btn btn-danger ">Join</button>
+                    </form>
+
+                    <p class="mt-3">Already a member? <a href="#" class="text-danger"  id="switchToLogin">Login</a></p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+{% block scripts %}
+    <script>
+        window.onload = function() {
+            {% if get_flashed_messages() %}
+            var flashModal = new bootstrap.Modal(document.getElementById('flashMessagesModal'));
+            flashModal.show();
+            setTimeout(function() {
+                flashModal.hide();
+            }, 2000);
+            {% endif %}
+        };
+    </script>
+    <script>
+
+    var today = new Date();
+
+
+    var year = today.getFullYear();
+    var month = String(today.getMonth() + 1).padStart(2, '0');
+    var day = String(today.getDate()).padStart(2, '0');
+    var systemDate = year + '-' + month + '-' + day;
+
+
+    var dateInput = document.getElementById('date_joined');
+
+
+    dateInput.addEventListener('input', function () {
+        var selectedDate = dateInput.value;
+
+        if (selectedDate > systemDate) {
+
+            dateInput.value = systemDate;
+            alert('The selected date cannot be later than today.');
+        }
+    });
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var loginForm = document.getElementById('loginForm');
+    var joinForm = document.getElementById('joinForm');
+    var switchToJoin = document.getElementById('switchToJoin');
+    var switchToLogin = document.getElementById('switchToLogin');
+
+    switchToJoin.addEventListener('click', function() {
+        loginForm.style.display = 'none';
+        joinForm.style.display = 'block';
+    });
+
+    switchToLogin.addEventListener('click', function() {
+        joinForm.style.display = 'none';
+        loginForm.style.display = 'block';
+    });
+});
+</script>
+<script>
+    function hoverLink(element) {
+        element.classList.remove('text-light');
+        element.classList.add('text-light');
+        element.classList.add('bg-black');
+        element.classList.add('bold-text');
+    }
+
+    function unhoverLink(element) {
+           element.classList.remove('text-light');
+            element.classList.add('text-light');
+            element.classList.remove('bold-text');
+    }
+
+document.getElementById('switchToJoin').addEventListener('click', function() {
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('joinForm').style.display = 'block';
+    document.getElementById('loginMessage').style.display = 'none';
+    document.getElementById('joinMessage').style.display = 'block';
+});
+
+document.getElementById('switchToLogin').addEventListener('click', function() {
+    document.getElementById('joinForm').style.display = 'none';
+    document.getElementById('loginForm').style.display = 'block';
+    document.getElementById('joinMessage').style.display = 'none';
+    document.getElementById('loginMessage').style.display = 'block';
+});
+$(document).ready(function() {
+    $('#searchInput').on('input', function() {
+        var query = $(this).val();
+        if (query.length > 2) { // Start searching after 2 characters
+            $.ajax({
+                url: "/search", // Flask route
+                data: { 'q': query },
+                type: "GET",
+                success: function(data) {
+                    var suggestions = data.suggestions;
+                    $('#searchResult').empty();
+                    suggestions.forEach(function(suggestion) {
+                        $('#searchResult').append(
+                            `<a href="#" class="list-group-item list-group-item-action bg-black text-light">${suggestion}</a>`
+                        );
+                    });
+                }
+            });
+        } else {
+            $('#searchResult').empty();
+        }
+    });
+
+    $(document).on('click', '.list-group-item', function() {
+        $('#searchInput').val($(this).text());
+        $('#searchForm').submit(); // Optionally submit the form
+    });
+});
+function validateAge() {
+    var dob = new Date(document.getElementById('birthdate').value);
+    var today = new Date();
+    var age = today.getFullYear() - dob.getFullYear();
+    var m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+        age--;
+    }
+    if(age < 12) {
+        alert("You must be at least 12 years old.");
+        return false;
+    }
+    return true;
+}
+
+// Call this function on form submission
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', (event) => {
+    // 获取所有使用 'formatted-date' 类名的元素
+    const dateElements = document.querySelectorAll('.formatted-date');
+
+    dateElements.forEach(element => {
+        const sessionDateTime = element.innerText;
+        const dateTimeParts = sessionDateTime.split(' ');
+        const datePart = dateTimeParts[0]; // 日期部分 (YYYY-MM-DD)
+
+        const dateObject = new Date(datePart);
+        if (!isNaN(dateObject)) {
+            const formattedDate = dateObject.toLocaleDateString('en-GB'); // 使用英国日期格式（日/月/年）
+            element.innerText = formattedDate;
+        } else {
+            console.error("Invalid date:", sessionDateTime);
+        }
+    });
+});
+
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', (event) => {
+    const sessionDate = document.getElementById('formatted-date').innerText;
+    const dateObject = new Date(sessionDate);
+    const formattedDate = dateObject.toLocaleDateString('en-GB'); // 使用英国日期格式（日/月/年）
+    document.getElementById('formatted-date').innerText = formattedDate;
+});
+</script>
+
+<script>
+  let baseDate = new Date(); // 设置基准日期为今天
+  baseDate.setHours(0, 0, 0, 0); // 去除时间部分
+  let selectedDate = '{{ date }}'; // Flask 传入的选中日期
+
+  // 生成一个日期范围数组
+  function generateDateRange(base) {
+    let range = [];
+    for (let i = 1; i < 9; i++) {
+      let date = new Date(base);
+      date.setDate(date.getDate() + i);
+      range.push(date.toISOString().split('T')[0]);
+    }
+    return range;
+  }
+
+  // 更新显示的日期按钮
+  function updateDateButtons() {
+    let container = document.getElementById('dateButtons');
+    container.innerHTML = '';
+
+    let today = new Date();
+    today.setHours(0, 0, 0, 0); // 今天的日期（没有时间部分）
+    let tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1); // 明天的日期
+
+    let dateRange = generateDateRange(baseDate );
+    dateRange.forEach(dateStr => {
+      let date = new Date(dateStr);
+      let buttonText = dateStr; // 默认显示日期字符串
+
+      // 检查是否是今天或明天
+    if (date.toDateString() === today.toDateString()) {
+    buttonText = 'TODAY';
+    } else if (date.toDateString() === tomorrow.toDateString()) {
+    buttonText = 'TOMORROW';
+    }
+      let btn = document.createElement('button');
+      btn.className = 'btn ' + (dateStr === selectedDate ? 'btn-info active' : 'btn-light');
+      btn.innerText = buttonText;
+      btn.onclick = function() {
+            selectedDate = dateStr; // 更新 selectedDate
+            updateDateButtons();
+            fetchSessionsForDate(selectedDate);   // 重新更新按钮
+        };
+        container.appendChild(btn);
+    });
+  }
+
+  function shiftDates(direction) {
+    let newBaseDate = new Date(baseDate);
+    newBaseDate.setDate(newBaseDate.getDate() + direction * 8);
+
+    // 获取今天的日期（没有时间部分）
+    let today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // 如果是向左移动（direction为-1）且新的基准日期早于今天，则不进行更新
+    if (direction === -1 && newBaseDate < today) {
+        return;
+    }
+
+    baseDate = newBaseDate;
+    updateDateButtons();
+}
+function fetchSessionsForCinemaAndDate() {
+
+    let selectedCinemaID = document.getElementById('cinemaSelect').value;
+    let selectedDate = '{{ date }}';
+    // Update the URL to fetch sessions for selected cinema and date
+    let url = `/get-sessions-for-cinema-and-date/${selectedCinemaID}/${selectedDate}`;
+    fetch(url)
+    .then(response => response.json())
+    .then(data => {
+        // Update the sessions display with the data received
+        updateSessionsDisplay(data.sessions);
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+// Call the function to update sessions for the initial load
+fetchSessionsForCinemaAndDate();
+function fetchSessionsForDate(dateStr) {
+    // 清空当前电影场次信息
+    let sessionsContainer = document.getElementById('sessionsContainer');
+    sessionsContainer.innerHTML = '';
+
+    // 发送请求到后端获取新的电影场次信息
+    fetch(`/get-sessions-for-date/${dateStr}`)
+        .then(response => response.json())
+        .then(data => {
+            // 假设后端返回的数据格式是 {sessions: [...] }
+            data.sessions.forEach(session => {
+                // 为每个电影场次创建一个新的 HTML 元素并添加到页面上
+                let sessionDiv = document.createElement('div');
+                sessionDiv.className = 'session';
+                sessionDiv.innerHTML = `
+                    <h3>${session.movieTitle}</h3>
+                    <p>${session.sessionDateTime} - Seats Available: ${session.seatAvailability}</p>
+                    <a href="/book-seats/${session.SessionID}">Book Seats</a>
+                `;
+                sessionsContainer.appendChild(sessionDiv);
+            });
+        })
+        .catch(error => console.error('Error fetching sessions:', error));
+}
+
+
+  function updateSessionsDisplay(sessions) {
+    let sessionsContainer = document.getElementById('sessionsContainer');
+    sessionsContainer.innerHTML = '';
+    sessions.forEach(session => {
+      let sessionDiv = document.createElement('div');
+
+      sessionDiv.innerHTML = `<h3>${session.Title}</h3><p>${session.SessionDateTime} - Seats Available: ${session.SeatAvailability}</p>`;
+      sessionsContainer.appendChild(sessionDiv);
+    });
+  }
+
+
+updateDateButtons();
+// 获取当前选定日期的电影场次信息
+fetchSessionsForDate(selectedDate);
+
+
+</script>
+<script>
+    function parseDateTime(dateTimeStr) {
+    // 分割日期和时间部分
+    const parts = dateTimeStr.split(' ');
+    const date = parts[0].split('-');
+    const time = parts[1].split(':');
+
+    // 提取日期和时间的各个部分
+    const year = parseInt(date[0], 10);
+    const month = parseInt(date[1], 10) - 1; // JavaScript中月份是从0开始的
+    const day = parseInt(date[2], 10);
+    const hours = parseInt(time[0], 10);
+    const minutes = parseInt(time[1], 10);
+    const seconds = parseInt(time[2], 10);
+
+    // 创建新的日期对象
+    return new Date(year, month, day, hours, minutes, seconds);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 获取所有使用 'session-datetime' 类名的元素
+    const datetimeElements = document.querySelectorAll('.session-datetime');
+
+    datetimeElements.forEach(element => {
+        const sessionDateTime = parseDateTime(element.innerText);
+        const sessionTime = sessionDateTime.toLocaleTimeString('en-GB', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
+
+        element.innerText = sessionTime;
+    });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var seatsElement = document.getElementById('selected-seats');
+    var seatsText = seatsElement.innerText;
+    
+    // 假设 seatsText 是 "Selected Seat Number: ['A6']"
+    var seats = seatsText.substring(seatsText.indexOf('[') + 1, seatsText.indexOf(']'));
+
+    // 去除引号并处理空数组的情况
+    seats = seats.replace(/['"]+/g, '').trim();
+    if (seats === '') {
+        seats = 'No seats selected';
+    }
+
+    seatsElement.innerText = 'Selected Seat Number: ' + seats;
+});
+</script>
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>
+
+{% endblock %}
+
+
+    </div>
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>

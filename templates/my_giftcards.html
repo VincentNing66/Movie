@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container text-light bg-black ">
+    <h2>My Gift Cards</h2>
+    <div class="container table-responsive" >
+        <table class="transparent-table col-lg-12">
+            <thead>
+                <tr class ="col ">
+                    <th>Gift Card No</th>
+                    <th>Balance</th>
+                    <th>Expiry Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for card in giftcards %}
+                <tr>
+                    <td>{{ card.GiftCardNo }}</td>
+                    <td>${{ card.Balance }}</td>
+                    <td><span class="formatted-date">{{ card.ExpiryDate }}<span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="1"><strong>Total Balance</strong></td>
+                    <td><strong>${{ total_balance }}</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+{% endblock %}

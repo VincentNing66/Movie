@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container text-light bg-black">
+
+    <h2 class= "text-center ">Customer Booking History</h2>
+    <div class="container table-responsive">
+        <table class="transparent-table" style="width: 100%;">
+
+            <thead>
+                <tr>
+                    <th>Booking ID</th>
+                    <th>Customer Name</th>
+                    <th>Ticket Number</th>
+                    <th>Movie Title</th>
+                    <th>Session Date</th>
+                    <th>Session Time</th>
+                    <th>Seat Number</th>
+                    <th>Total Price</th>
+                    <th>Payment Method</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking.BookingID }}</td>
+                    <td>{{ booking.First_name }} {{ booking.Last_name }}</td>
+                    <td>{{ booking.TicketNumber }}</td>
+                    <td>{{ booking.MovieTitle }}</td>
+                    <td>{{ booking.SessionDate }}</td>
+                    <td>{{ booking.SessionTime }}</td>
+                    <td>{{ booking.SeatNumber }}</td>
+                    <td>${{ booking.TotalPrice }}</td>
+                    <td>{{ booking.PaymentMethod}}</td>
+                    <td>{{ booking.Status }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

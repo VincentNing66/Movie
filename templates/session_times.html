@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container text-light">
+    
+    <h1 id="session-title">Session for <span id="formatted-date">{{ date }}</span></h1><h1 id="weekday"></h1>
+
+    <!-- 影院和日期选择表单 -->
+     <form action="{{ url_for('session_times') }}" method="get" class="mb-3">
+        <!-- 影院选择复选框 -->
+        {% for cinema in cinemas %}
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" value="{{ cinema.CinemaID }}" id="cinema{{ cinema.CinemaID }}" name="cinemas">
+            <label class="form-check-label" for="cinema{{ cinema.CinemaID }}">
+                {{ cinema.CinemaName }}
+            </label>
+        </div>
+        {% endfor %}
+        <div class= row>
+        <!-- 日期选择 -->
+          <div class="form-group col-lg-4">
+              <label for="selectedDate">Selected Date:</label>
+              <input type="date" id="selectedDate" name="date" value="{{ date }}" class="form-control bg-black text-light">
+          </div>
+          <div class="col-lg-2">
+          <!-- 提交按钮 -->
+            <button type="submit" class="btn btn-primary mt-4">Show Sessions</button>
+          </div>
+        </div>
+    </form>
+
+    <!-- 展示电影卡片 -->
+    <div id="sessionsContainer">
+        {% for movie in movies %}
+        <div class="card mb-3 mt-5 bg-black text-light">
+            <div class="row g-0">
+                <div class="col-lg-4"> 
+                    <a href="{{ url_for('Movie_detail', MovieID=movie.MovieID) }}">
+                        <img src="{{ movie.ImagePath }}" class="movie-image" alt="{{ movie.Title }}">
+                    </a>
+                </div>
+                <div class="col-lg-8">
+                    <div class="card-body bg-black">
+                        <h5 class="card-title">
+                            <a href="{{ url_for('Movie_detail', MovieID=movie.MovieID) }}" class="text-light">{{ movie.Title }}</a>
+                        </h5>
+                        <p class="card-text">Release Date: <span id="formatted-date">{{ movie.ReleaseDate }}</span></p>
+                        <p class="card-text">{{ movie.Genre }} - {{ movie.Duration }} mins</p>
+                        <p class="card-text">Rating: {{ movie.Rating }}</p>
+                        <p class="card-text">{{ movie.Detail }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- 展示该电影的场次 -->
+                {% for cinema_name, sessions in movie.Cinemas.items() %}
+                    <h6 class="card-subtitle mb-2">{{ cinema_name }}</h6>
+                    <div class = "row">
+                        {% for session in sessions %}
+                        <div class="mr-4 mb-2 col-lg-4 "> 
+                            <a href="{{ url_for('select_seats', SessionID=session.SessionID) }}" class="btn btn-primary me-4"> <span class="session-datetime">{{ session.SessionDateTime }}</span><br> Seats Available : {{ session.SeatAvailability }}</a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>   
+        </div>
+        {% endfor %}
+    </div>
+</div>
+ <script>
+    // 获取日期字符串，例如 "2024-01-02"
+    var dateString = "{{ date }}";
+
+    // 将日期字符串转换为 JavaScript Date 对象
+    var dateObj = new Date(dateString);
+
+    // 创建一个数组来存储星期几的名称
+    var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+    // 获取日期对应的星期几
+    var weekday = weekdays[dateObj.getDay()];
+
+    // 在HTML中插入星期几的信息
+    document.getElementById("weekday").innerHTML = "" + weekday;
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', (event) => {
+    // 获取所有使用 'formatted-date' 类名的元素
+    const dateElements = document.querySelectorAll('.formatted-date');
+
+    dateElements.forEach(element => {
+        const sessionDate = element.innerText;
+        const dateObject = new Date(sessionDate);
+        const formattedDate = dateObject.toLocaleDateString('en-GB'); // 使用英国日期格式（日/月/年）
+        element.innerText = formattedDate;
+    });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', (event) => {
+    // 获取所有使用 'formatted-date' 类名的元素
+    const dateElements = document.querySelectorAll('.formatted-date');
+
+    dateElements.forEach(element => {
+        const sessionDate = element.innerText;
+        const dateObject = new Date(sessionDate);
+        const formattedDate = dateObject.toLocaleDateString('en-GB'); // 使用英国日期格式（日/月/年）
+        element.innerText = formattedDate;
+    });
+});
+</script>
+{% endblock %}

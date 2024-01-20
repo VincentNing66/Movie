@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid mt-5 text-light">
+    <div>     
+        <a href="{{ url_for('movie_sales_report_page') }}" class="btn btn-outline-light me-5">Movie Sales Report</a> 
+        <a href="{{ url_for('ticket_type_report_page') }}" class="btn btn-outline-light me-5">Ticket Type Report</a>
+        <a href="{{ url_for('top_customers_report_page') }}" class="btn btn-outline-light me-5">Top Customers Report</a>
+        <!--<a href="{{ url_for('sales_report_page') }}" class="btn btn-outline-light me-5">Sales Report</a>-->
+    </div>  
+  <div class="mt-5 text-light">
+  <h2>Top 5 Customers</h2>
+  <button onclick="goBack()" class="btn btn-secondary mt-3">Go Back</button>
+  <table id="vipCustomers" class="transparent-table text-light col-10 mt-3">
+    <thead>
+      <tr>
+        <th>Customer ID</th>
+        <th>Full Name</th>
+        <th>Total Sales</th>
+      </tr>
+    </thead>
+    <tbody >
+      <!-- 使用 JavaScript 动态填充 -->
+    </tbody>
+  </table>
+</div>
+
+<script>
+function updateVipCustomers() {
+  fetch('/top-customers-report') // 更新这里的路由以匹配 Flask 路由
+    .then(response => response.json())
+    .then(data => {
+      const tableBody = document.getElementById('vipCustomers').querySelector('tbody');
+      tableBody.innerHTML = ''; // 清空当前内容
+      data.forEach(customer => {
+        const row = `<tr>
+                      <td>${customer.CustomerID}</td>
+                      <td>${customer.FullName}</td>
+                      <td>${customer.TotalSales}</td>
+                    </tr>`;
+        tableBody.innerHTML += row;
+      });
+    });
+}
+
+updateVipCustomers(); // 调用函数更新VIP客户表格
+</script>
+
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+ <!-- Welcome Message -->
+<div class="containe ">
+    <div class=" mb-3">
+        <div class="col text-center text-light " >
+            <h1>Welcome to the Dashboard, {{ user_info.Username }}!</h1>
+            <p>Current user type: {{ session['UserType'] }}</p>
+        </div>
+    </div>
+    <div class="containe text-light" style="padding-left: 50px;">
+        <!-- Buttons for Different Actions -->
+        <div class="row me-4 ">
+            <!-- Common for All User Types -->
+            <div class="col-md-4 mb-4 mt-4">
+                <a href="{{ url_for('manage_profile') }}" class="btn btn-outline-light" style="width: 200px;">Manage Profile</a>
+            </div>
+            {% if session['UserType'] in ['Admin', 'Manager', 'Staff'] %}
+                <div class="col-md-4 mb-4 mt-4">
+                    <a href="{{ url_for('Movie') }}" class="btn btn-outline-light" style="width: 200px;">View Movies</a>
+                </div>
+                <div class="col-md-4 mb-4 mt-4">
+                    <a href="{{ url_for('check_in_ticket') }}" class="btn btn-outline-light" style="width: 200px;">Checkin</a>
+                </div>
+                <div class="col-md-4 mb-4 mt-4">
+                    <a href="{{ url_for('session_manage') }}" class="btn btn-outline-light" style="width: 200px;">Manage Sessions</a>
+                </div>
+            {% endif %}
+            {% if session['UserType'] in ['Admin', 'Manager'] %}
+                <div class="col-md-4 mb-4 mt-4"> 
+                    <a href="{{ url_for('manage_user', UserType='Staff') }}" class="btn btn-outline-light" style="width: 200px;">Manage Staff</a>
+                </div>
+                <div class="col-md-4 mb-4 mt-4">
+                    <a href="{{ url_for('manage_Movie') }}" class="btn btn-outline-light" style="width: 200px;">Manage Movies</a>
+                </div>
+                
+                <div class="col-md-4 mb-4 mt-4">
+                    <a href="{{ url_for('manage_promotion', UserType='Staff') }}" class="btn btn-outline-light" style="width: 200px;">Manage Promotion</a>
+                </div>
+                <div class="col-md-4 mb-4 mt-4">
+                    <a href="{{ url_for('manage_tickettype_price') }}" class="btn btn-outline-light" style="width: 200px;">Manage Type Discount</a>
+                </div>
+                <div class="col-md-4 mb-4 mt-4">
+                    <a href="{{ url_for('manage_movie_price') }}" class="btn btn-outline-light" style="width: 200px;">Manage Ticket Price</a>
+                </div>
+                <div class="col-md-4 mb-4 mt-4">
+                    <a href="{{ url_for('dashboard_report') }}" class="btn btn-outline-light" style="width: 200px;">Reports</a>
+                </div>
+            {% endif %}
+            {% if session['UserType'] == 'Admin' %}
+                <div class="col-md-4 mb-4 mt-4">
+                    <a href="{{ url_for('manage_user', UserType='Manager') }}" class="btn btn-outline-light" style="width: 200px;">Manage Manager</a>
+                </div>
+                <!-- Additional Admin Functions -->
+                <!-- Example: Manage Managers -->
+                
+            {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

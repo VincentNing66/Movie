@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-4 text-light">
+    <div class="row justify-content-center">
+        
+            <h2 class="text-center text-light ">Manage Profile</h2>
+            {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}     
+        <form method="post" onsubmit="return validateForm()">
+
+            <!-- Profile Update Form -->
+            <div class="profile-update-form mt-4 text-light">
+                <h3>Update Your Information</h3>
+            
+            {% if session['UserType'] == 'Customer' %}
+            <form method="post" onsubmit="return validateForm()" action="{{ url_for('manage_profile') }}"> 
+                <!-- Name Field -->
+                <div class="mb-3 row">
+                    <label class="col-4 col-form-label text-light">First Name: </label>
+                    <div class="col-4">
+                        <input type="text" class="form-control text-light bg-black" id="First_name" name="First_name" value="{{ profile_info.First_name }}" required>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-sm-4 col-form-label text-light">Last Name: </label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control text-light bg-black" id="Last_name" name="Last_name" value="{{ profile_info.Last_name }}" required>
+                    </div>
+                </div>
+
+                <!-- Birthdate Field -->
+                <div class="mb-3 row">
+                    <label class="col-sm-4 col-form-label text-light">Birthdate:</label>
+                    <div class="col-sm-4">
+                        <input type="date" class="form-control text-light bg-black" id="Birthdate" name="Birthdate" value="{{ profile_info.Birthdate }}" required>
+                    </div>
+                </div>
+
+
+                <!-- Con Field -->
+                <div class="mb-3 row">
+                    <label class="col-sm-4 col-form-label text-light">Contact: </label>
+                    <div class="col-sm-4">
+                        <input type="tel" class="form-control text-light bg-black" id="Con" name="Con"pattern="[0-9]{8,15}"  value="{{ profile_info.Con }}" required title="Contact number must be 8 to 15 digits long.">
+                    </div>
+                </div>
+
+                <div class ="row">
+                    <div class="mt-3 col-md-3">
+                <button type="submit" class="btn btn-outline-light me-2">Update Profile</button>
+                </div>
+                <div class="mt-3 col-md-3">
+                    <a href="{{ url_for('change_Password') }}" class="btn btn-danger me-2">Change Password</a>
+                </div>
+                </div>
+            </form>
+            {% endif %}
+            {% if session['UserType'] in ['Admin', 'Manager','Staff'] %}
+                <form method="post" onsubmit="return validateForm()" action="{{ url_for('manage_profile') }}" required> 
+                <!-- Name Field -->
+                <div class="mb-3 row text-light">
+                    <label class="col-sm-4 col-form-label text-light">First Name: </label>
+                    <div class="col-sm-4 text-light">
+                        <input type="text" class="form-control text-light bg-black" id="First_name" name="First_name" value="{{ profile_info.First_name }}" required>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-sm-4 col-form-label text-light">Last Name: </label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control text-light bg-black"id="ast_name" name="Last_name" value="{{ profile_info.Last_name }}" required>
+                    </div>
+                </div>
+
+                <!-- Department Field -->
+                <div class="mb-3 row">
+                    <label class="col-sm-4 col-form-label text-light">Department: </label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control text-light bg-black"id="Department" name="Department" value="{{ profile_info.Department }}" required>
+                    </div>
+                </div>
+
+                <!-- Con Field -->
+                <div class="mb-3 row">
+                    <label class="col-sm-4 col-form-label text-light">Contact:</label>
+                    <div class="col-sm-4">
+                        <input type="tel" class="form-control text-light bg-black" id="Con" name="Con"pattern="[0-9]{8,15}"  value="{{ profile_info.Con }}" required title="Contact number must be 8 to 15 digits long.">
+                    </div>
+                </div>
+                <div class ="row">
+                    <div class="mt-3 col-md-3">
+                <button type="submit" class="btn btn-outline-light me-2">Update Profile</button>
+                </div>
+                <div class="mt-3 col-md-3">
+                    <a href="{{ url_for('change_Password') }}" class="btn btn-danger me-2">Change Password</a>
+                </div>
+                </div>
+            </form>
+            {% endif %} 
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

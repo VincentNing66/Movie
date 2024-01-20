@@ -1,0 +1,42 @@
+<!-- payment_success.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container text-light">
+    <h2>Payment Successful</h2>
+    <p>Thank you for your purchase!</p>
+    <div>
+        <h3>{{ session_info.MovieTitle }}</h3>
+        <p>{{ session_info.CinemaName }}</p> 
+        
+        <p><span id="formatted-date">{{ session_info.SessionDateTime }}</span></p><p id="weekday"></p>
+        <p>Time : <span class="session-datetime">{{ session_info.SessionDateTime }}</span></p>
+        <p id="selected-seats">Selected Seat Number: {{ selected_seats }}</p>
+
+        <!-- 
+        <p>Selected Ticket Number: {{ ticket_number }}</p>
+        <div class="container bg-light col-md-5">
+        <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code">
+        </div> -->
+        <a href="{{ url_for('my_bookings') }}" class="btn btn-outline-light"  onmouseover="hoverLink(this)" onmouseout="unhoverLink(this)">View My Booking</a>
+
+    </div>
+</div>
+<script>
+// 获取日期字符串，例如 "2024-01-02"
+    var dateString = "{{ session_info.SessionDateTime }}";
+
+    // 将日期字符串转换为 JavaScript Date 对象
+    var dateObj = new Date(dateString);
+
+    // 创建一个数组来存储星期几的名称
+    var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+    // 获取日期对应的星期几
+    var weekday = weekdays[dateObj.getDay()];
+
+    // 在HTML中插入星期几的信息
+    document.getElementById("weekday").innerHTML = "" + weekday;
+</script>
+
+{% endblock %}

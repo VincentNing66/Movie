@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container  bg-black text-light">
+    <h2>My Booking History</h2>
+     <div class="container table-responsive" >
+        <table class="transparent-table" style="width: 100%;">
+            <thead>
+                <tr>
+                    
+                    <th>BookingID</th>
+                    <th>Movie Title</th>
+                    <th>Session Date</th>
+                    <th>Session Time</th>
+                   
+                    <th>Total Price</th>
+                    
+                    <th>Action </th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                
+                <div>
+                    {% if page > 1 %}
+                        <a href="{{ url_for('my_bookings', page=page-1) }}">Previous</a>
+                    {% endif %}
+
+                    <!-- 显示页码 -->
+                    {% for p in range(1, total_pages + 1) %}
+                        <a href="{{ url_for('my_bookings', page=p) }}">{{ p }}</a>
+                    {% endfor %}
+
+                    <!-- 显示“下一页”链接，如果不是最后一页 -->
+                    {% if page < total_pages %}
+                        <a href="{{ url_for('my_bookings', page=page+1) }}">Next</a>
+                    {% endif %}
+                </div>
+                {% for booking in bookings %}
+                <tr>
+                    
+                    <td>{{ booking.BookingID }}</a></td>
+                    <td>{{ booking.MovieTitle }}</td>
+                    <td><span class="formatted-date">{{ booking.SessionDateTime }}</span></td>
+                    <td><span class="session-datetime">{{ booking.SessionDateTime }}</span></td>
+                    <td>${{ booking.TotalPrice }}</td>
+                    
+                     <td>
+                         <a href="{{ url_for('booking_detail', BookingID=booking.BookingID) }}" class="btn btn-primary">Detail</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+function confirmRefund(booking_id) {
+    if (confirm('Are you sure you want to refund this ticket?')) {
+        fetch("{{ url_for('refund', booking_id=0) }}".replace("0", booking_id), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            // 可以在这里添加其他所需的请求头或数据
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);  // 显示服务器返回的消息
+            location.reload();    // 重新加载页面
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+}
+
+function parseDateTime(dateTimeStr) {
+    // 分割日期和时间部分
+    const parts = dateTimeStr.split(' ');
+    const date = parts[0].split('-');
+    const time = parts[1].split(':');
+
+    // 提取日期和时间的各个部分
+    const year = parseInt(date[0], 10);
+    const month = parseInt(date[1], 10) - 1; // JavaScript中月份是从0开始的
+    const day = parseInt(date[2], 10);
+    const hours = parseInt(time[0], 10);
+    const minutes = parseInt(time[1], 10);
+    const seconds = parseInt(time[2], 10);
+
+    // 创建新的日期对象
+    return new Date(year, month, day, hours, minutes, seconds);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 获取所有使用 'session-datetime' 类名的元素
+    const datetimeElements = document.querySelectorAll('.session-datetime');
+
+    datetimeElements.forEach(element => {
+        const sessionDateTime = parseDateTime(element.innerText);
+        const sessionTime = sessionDateTime.toLocaleTimeString('en-GB', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
+
+        element.innerText = sessionTime;
+    });
+});
+</script>
+
+
+{% endblock %}
+
+{% endblock %}
+

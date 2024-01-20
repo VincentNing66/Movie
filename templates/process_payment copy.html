@@ -1,0 +1,289 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container text-light">
+    <h2>Process Payment</h2>  
+    <div>
+        <h3>{{ session_info.MovieTitle }}</h3>
+        <p>{{ session_info.CinemaName }}</p>
+        <p>{{ session_info.SessionDateTime }}</p>
+        <p>Selected Seat Number:  {{ selected_seats }}</p>
+    </div>
+    <div class="mb-3 col-md-6 bg-black text-light">
+        <form id="payment-option-form">
+            <label>
+                <input type="radio" name="payment_option" value="giftcard" required>
+                Use Gift Card
+            </label>
+            <label>
+                <input type="radio" name="payment_option" value="creditcard" required>
+                Use Credit Card
+            </label>
+        </form>
+        <div id="gift-card-form" style="display: none;">
+        <div class="payment-method">
+            <input type="radio" id="gift-card" name="payment_method" value="giftcard" required>
+            <label for="gift-card">Gift Card Pay</label>
+            <div id="gift-card-details" class="gift-card-details">
+                <label for="giftCardNo">Giftcard Number</label>
+                <input type="text" class="form-control" id="giftCardNo" name="giftCardNo" placeholder="1234 5678 9123 4567">
+                <label for="giftCardAmount">Amount to Apply</label>
+                <input type="number" class="form-control" id="giftCardAmount" name="giftCardAmount" placeholder="Enter amount" min="0">
+                Remaining Amount to Pay: <span id="remainingPrice">${{ total_price }}</span>    
+
+        </div>
+        
+            <form id="payment-form" method="post" action="{{ url_for('process_payment') }}">
+                <div class="mb-3 col-md-6 bg-black text-light">
+                 <!-- Payment method selection -->     
+            <div class="payment-method">
+                <input type="radio" id="credit-card" style="display: none;" name="payment_method" value="credit_card" required>
+                <label for="credit-card">Credit Card</label>
+
+                <!-- Credit card details (hidden by default, shown when this method is selected) -->
+                <div id="credit-card-details" class="credit-card-details">
+                    <div class="form-group">
+                        <label for="cardNumber">Card Number</label>
+                        <input type="text" class="form-control" id="cardNumber" name="cardNumber" placeholder="1234 5678 9123 4567" >
+                    </div>
+                    <div class="form-group">
+                        <label for="cardName">Name on Card</label>
+                        <input type="text" class="form-control" id="cardName" name="cardName" placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="expiryDate">Expiry Date</label>
+                        <input type="month" class="form-control" id="expiryDate" name="expiryDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="cvv">CVV</label>
+                        <input type="text" class="form-control" id="cvv" name="cvv" placeholder="123">
+                    </div>
+                </div>
+            </div>
+       
+            <div class="payment-method">
+                <input type="radio" id="google-pay" name="payment_method" value="google_pay" required>
+                <label for="google-pay">Google Pay</label>
+            </div>
+
+            <div class="total-price">
+                Total: ${{ total_price }}
+            </div>
+         </div>
+        <button type="submit" id="submit-button" class="btn btn-primary" disabled>Proceed to Payment</button>
+    </form>
+</div>
+
+
+    
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const paymentOptionForm = document.getElementById('payment-option-form');
+    const giftCardForm = document.getElementById('gift-card-form');
+    const creditCardForm = document.getElementById('credit-card-form');
+
+    paymentOptionForm.addEventListener('change', function(event) {
+        if (event.target.value === 'giftcard') {
+            giftCardForm.style.display = 'block';
+            creditCardForm.style.display = 'none';
+        } else if (event.target.value === 'creditcard') {
+            creditCardForm.style.display = 'block';
+            giftCardForm.style.display = 'none';
+        }
+    });
+</script>
+<script>
+
+</script>
+{% endblock %}
+
+
+
+
+
+@app.route('/process-payment', methods=['GET', 'POST'])
+@login_required
+@UserType_required('Admin','Manager','Staff','Customer')
+def process_payment():
+    
+    if not current_user.is_authenticated:
+        flash("Please log in to proceed with the payment.")
+        return redirect(url_for('login'))
+    
+    payment_method_selected = None
+
+    if request.method == 'POST':
+        payment_method = request.form.get('payment_method')
+        if payment_method:
+            payment_method_selected = payment_method
+
+        # 从 session 中获取 total_price 和其他必要信息
+        total_price = session.get('total_price', 0)
+        movie_info = session.get('movie_info', {})
+        SessionID= session['selected_session_id'] 
+        session_info = get_booking_details(SessionID)
+        MovieID =  session_info['MovieID']
+        selected_seats = session['selected_seats']
+        print("Selected seats in /process-payment:", selected_seats, type(selected_seats))
+        selected_session_id = session.get('selected_session_id')
+        selected_tickets = session.get('selected_tickets', {})
+        filtered_tickets = {ticket_type: quantity for ticket_type, quantity in selected_tickets.items() if quantity > 0}
+        user_id = current_user.id
+        customer_id = current_user.CustomerID
+        gift_card_code = request.form.get('GiftCardNo')
+        gift_card_amount = float(request.form.get('giftCardAmount', 0))
+        payment_method = request.form.get('payment_method')
+        remaining_price = total_price
+        #print(total_price,movie_info,selected_seats,selected_session_id,selected_tickets,filtered_tickets,user_id,customer_id)
+        
+        if not selected_session_id or not movie_info:
+                flash("Booking information is incomplete.")
+                return redirect(url_for('home'))
+            
+        
+        payment_method = request.form.get('payment_method')
+        if not payment_method:
+            
+            return render_template('process_payment.html',total_price=total_price,movie_info = movie_info,SessionID= SessionID, 
+        session_info = session_info, MovieID =  MovieID, selected_seats = selected_seats, selected_session_id = selected_session_id,selected_tickets = selected_tickets, filtered_tickets = filtered_tickets,user_id = user_id,customer_id = customer_id)
+        remaining_price = total_price 
+        gift_card_code = request.form.get('GiftCardNo')
+        gift_card_amount = request.form.get('giftCardAmount', type=float)  # 用户输入的使用金额
+
+       # ... 省略部分代码 ...
+
+        if gift_card_code and gift_card_amount > 0:
+            gift_card_balance = get_gift_card_balance(gift_card_code)
+            if gift_card_balance >= gift_card_amount:
+                # 更新礼品卡余额
+                new_balance = gift_card_balance - gift_card_amount
+                update_gift_card_balance(gift_card_code, new_balance)
+                remaining_price -= gift_card_amount
+                # 插入礼品卡支付记录
+                
+
+                if remaining_price <= 0:
+                    # 完成订单
+                    booking_id = insert_booking(customer_id, user_id, SessionID, total_price, 'Completed')
+                    insert_payment_info(BookingID, gift_card_amount, 'GiftCard', gift_card_code)
+                    print(insert_payment_info)
+                    for seat in selected_seats:
+                        ticket_number = generate_ticket_number(16)
+                        insert_ticket_and_update_seat(SessionID, seat, BookingID, user_id, MovieID, ticket_number)
+                        update_session_seat_availability(SessionID, seat_count)
+                    return redirect(url_for('payment_success'))
+
+                # 如果还有剩余金额需要支付
+                elif remaining_price > 0:
+                    if payment_method == 'credit_card':
+                        # 处理信用卡支付
+                        print(f"Processing credit card payment for username: {Username}")
+                    elif payment_method == 'google_pay':
+                        # 处理Google Pay支付
+                        print(f"Processing Google Pay payment for remaining amount: ${remaining_price}")
+                    else:
+                        flash("Please select a valid payment method for the remaining amount.")
+                        return render_template('process_payment.html', ...)
+                else:
+                    flash("Please make a payment selection.")
+
+                    return render_template('process_payment.html',payment_method_selected=payment_method_selected,total_price=total_price,movie_info = movie_info,SessionID= session_id, 
+        session_info = session_info, MovieID =  MovieID, selected_seats = selected_seats, selected_session_id = selected_session_id,selected_tickets = selected_tickets, filtered_tickets = filtered_tickets,user_id = user_id,customer_id = customer_id)
+
+           
+        movie_info = session.get('movie_info', {})
+        try:
+            print("Attempting to insert into database...")
+            cursor = getCursor()  # 获取游标
+                    # 插入订票详情
+            booking_data = (customer_id, user_id, SessionID, total_price, 'Completed')
+            print("Booking数据:", booking_data)
+            cursor.execute("""
+                INSERT INTO Bookings 
+                (CustomerID, UserID, SessionID,  TotalPrice,  PaymentStatus)
+                VALUES (%s, %s, %s, %s, %s )
+            """, booking_data)
+            BookingID = cursor.lastrowid
+            # 打印并插入Payment记录
+            print("准备插入Payment记录...")
+            payment_data = (BookingID, total_price, payment_method)
+            print("Payment数据:", payment_data)
+            cursor.execute("""
+                INSERT INTO Paymentinfo (BookingID, AmountPaid, PaymentDate, PaymentMethod)
+                VALUES (%s, %s, NOW(), %s)
+            """, payment_data)
+            
+            for seat in selected_seats:
+                # 对每个座位执行操作
+                # 例如，插入到数据库或添加到订单详情等
+                print("Processing seat:", seat) 
+                ticket_number = generate_ticket_number(16)
+                qr = qrcode.QRCode(
+                    version=1,
+                    error_correction=qrcode.constants.ERROR_CORRECT_L,
+                    box_size=10,
+                    border=4,
+                )
+                qr.add_data(ticket_number)
+                qr.make(fit=True)
+
+                img = qr.make_image(fill='black', back_color='white')
+                buffered = BytesIO()
+                img.save(buffered)
+                img_str = base64.b64encode(buffered.getvalue()).decode()
+
+                tickets_data = (BookingID,user_id,MovieID ,SessionID,seat, ticket_number)
+                print("tickets_data", tickets_data) 
+                cursor.execute("""
+                    INSERT INTO Tickets (BookingID,UserID, MovieID,SessionID,SeatNumber,TicketNumber)
+                    VALUES (%s, %s,%s, %s, %s, %s)
+                """, tickets_data)
+            for seat in selected_seats:
+                # 对每个座位执行操作
+                # 例如，插入到数据库或添加到订单详情等
+                seats_data = (SessionID,seat, False)
+                print("seats_data", seats_data) 
+                cursor.execute("""
+                    INSERT INTO Seats (SessionID, SeatNumber, IsAvailable)
+                    VALUES (%s, %s, %s)
+                """, seats_data)
+            try:
+                seat_count = len(selected_seats)  # 购买的票数
+                cursor.execute("""
+                    UPDATE SESSION
+                    SET SeatAvailability = SeatAvailability - %s
+                    WHERE SessionID = %s
+                """, (seat_count, SessionID))
+                connection.commit()
+            except Exception as e:
+                print("Error updating seat availability:", e)
+                connection.rollback()
+                flash("An error occurred during booking.")
+                return redirect(url_for('select_seats', SessionID=SessionID))
+            # 提交事务
+            connection.commit()
+            print("Insertion successful.")
+            session['user_id'] = user_id
+            session['recent_booking_id'] = BookingID
+        except Exception as e:
+            print("An error occurred during booking:", e)
+            flash("An error occurred during booking.")
+            return redirect(url_for('select_seats', SessionID=selected_session_id))
+        
+        # 清除session信息并跳转到成功页面
+        session.pop('selected_session_id', None)
+        session.pop('movie_info', None)
+        session.pop('selected_tickets', None)
+
+        print("Session ID:", selected_session_id)
+        print("Movie Info:", movie_info)
+        print("Selected Tickets:", selected_tickets)
+
+
+        # 跳转到支付成功页面
+        return render_template('payment_success.html',total_price=total_price,movie_info = movie_info,SessionID= SessionID, 
+        session_info = session_info, MovieID =  MovieID, selected_seats = selected_seats, selected_session_id = selected_session_id,selected_tickets = selected_tickets, filtered_tickets = filtered_tickets,user_id = user_id,customer_id = customer_id,ticket_number=ticket_number,qr_code=img_str)
+
+    # 返回支付表单页面
+    return render_template('process_payment.html',total_price=total_price,movie_info = movie_info,SessionID= SessionID, 
+        session_info = session_info, MovieID =  MovieID, selected_seats = selected_seats, selected_session_id = selected_session_id,selected_tickets = selected_tickets, filtered_tickets = filtered_tickets,user_id = user_id,customer_id = customer_id,qr_code=img_str,ticket_number=ticket_number,)

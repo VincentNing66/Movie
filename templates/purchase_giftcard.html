@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container ms-4 col-md-6 text-light">
+    <h2>Purchase Gift Card</h2>
+    <img src="https://static.wixstatic.com/media/34d227_7da019252bd1449eb4d24b8683515fa4~mv2.webp" alt="Magic Movie Logo" style="width:300px; height: auto;">
+</div>
+
+<!-- 表单用于提交购买请求 -->
+<div class="container mt-4 text-light">
+<form id="purchaseForm" class="container text-light">
+    <div class="container col-8 ">
+        <div class="row">
+            <div class="container col-md-2 mt2 ">
+                <label for="cardValue" class="me-5">Value:</label>
+                
+                <select name="cardValue" id="cardValue"class="form-control bg-black text-light" style="width: 100px;">
+                    <option value="30">$30</option>
+                    <option value="50">$50</option>
+                    <option value="80">$80</option>
+                    <option value="100">$100</option>
+                </select>
+            </div>
+        
+            <div class="container col-2 mt2 ">
+                <label for="quantity" class="me-4">Quantity:</label>
+                <input type="number" id="quantity" name="quantity" value="1" min="1" required class="form-control bg-black text-light" style="width: 100px;">
+            </div>
+        </div>
+    </div>
+</form>
+<!-- Payment form -->
+<div class="container col-md-6 mt-3  ">
+<form id="payment-form"  class="text-light bg-black p-3">
+    <!-- Payment method selection -->  
+    <div class ="row col-md-4">    
+        <div class="payment-method mb-3 ">
+            <input type="radio" id="credit-card" name="payment_method" value="credit_card" required>
+            <label for="credit-card">Credit Card</label>
+
+            <!-- Credit card details (hidden by default, shown when this method is selected) -->
+            <div id="credit-card-details" class="credit-card-details mt-2">
+                <div class="form-group">
+                    <label for="cardNumber">Card Number</label>
+                    <input type="text" class="form-control bg-black text-light " id="cardNumber" name="cardNumber" placeholder="1234 5678 9123 4567">
+                </div>
+                <div class="form-group">
+                    <label for="cardName">Name on Card</label>
+                    <input type="text" class="form-control bg-black text-light " id="cardName" name="cardName" placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label for="expiryDate">Expiry Date</label>
+                    <input type="month" class="form-control bg-black text-light " id="expiryDate" name="expiryDate">
+                </div>
+                <div class="form-group">
+                    <label for="cvv">CVV</label>
+                    <input type="text" class="form-control bg-black text-light " id="cvv" name="cvv" placeholder="123">
+                </div>
+            </div>
+        </div>
+        <div class="payment-method mb-3">
+            <input type="radio" id="google-pay" name="payment_method" value="google_pay" required>
+            <label for="google-pay">Google Pay</label>
+        </div>
+         <div class="payment-method mb-3">
+            <input type="radio" id="bank-pay" name="payment_method" value="bank_pay" required>
+            <label for="bank-pay">InternetBank Pay</label>
+        </div>
+    </div>
+
+    <div class="total-price" id="totalprice">Total: $0</div>
+
+    <button type="submit" id="submit-button" class="btn btn-danger mt-3">Purchase</button>
+</form>
+</div>
+
+<div id="message"></div>
+</div>
+
+  <!-- Login Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-aside">
+        <div class="modal-content bg-black text-light">
+            <div class="modal-header border-bottom-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <!-- Modal Body -->
+            <div class="modal-body">
+               <!-- Login Form -->
+                <div id="loginForm">                   
+                    <form action="/login" method="post">
+                        <div class="mb-3 ">
+                            
+                            <input type="text" class="form-control bg-black text-light custom-placeholder" id="Username" name="Username" placeholder="Username"required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="Password" class="form-control bg-black text-light custom-placeholder" id="Password" name="Password"  placeholder="Password" required >
+                        </div>
+                        <input type="hidden" name="next" id="loginNext" value="">
+                        <button type="submit" class="btn btn-danger">SIGN IN</button>
+                    </form>
+                     <p class="mt-3">Not a member? <a href="#" class="text-danger" id="switchToJoin">Join Us</a></p>
+                </div>
+
+                
+                
+               <!-- Registration Form -->
+                <div id="joinForm" style="display: none;">
+                    <form action="/register" method="post">
+                        <div class="row justify-content-center">
+                            <div class="modal-content bg-black text-light">
+                                <div class="mb-3">
+                                    
+                                    <input type="text" class="form-control bg-black text-light custom-placeholder" id="Username" name="Username" placeholder="Username*" required>
+                                </div>
+                                <div class="mb-3">
+                                    <input type="Password" class="form-control bg-black text-light custom-placeholder" id="Password" name="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}"  placeholder="Password*" required required title="Password must be at least 8 characters long, including an uppercase letter, a lowercase letter, a number, and a special character.">
+                                </div>
+                                <div class="mb-3">
+                                    
+                                    <input type="text" class="form-control bg-black text-light custom-placeholder" id="FirstName" name="First_name" placeholder="First Name*" required>
+                                </div>
+                                <div class="mb-3">
+                                   
+                                    <input type="text" class="form-control bg-black text-light custom-placeholder" id="LastName" name="Last_name" placeholder="Last Name*" required>
+                                </div>
+                                <div class="mb-3">
+                                    
+                                    <input type="date" class="form-control bg-black text-light custom-placeholder" id="Birthdate" name="Birthdate" placeholder="Birthdate*" required>
+                                </div>
+                                <div class="mb-3">
+                                    
+                                    <input type="tel" class="form-control bg-black text-light custom-placeholder" id="con" name="con" pattern="[0-9]{8,15}"  placeholder="Contact*" required title="Contact number must be 8 to 15 digits long.">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 其他 Customer 表需要的字段 -->
+                        <button type="submit" class="btn btn-danger ">Join</button>
+                    </form>
+                
+                    <p class="mt-3">Already a member? <a href="#" class="text-danger"  id="switchToLogin">Login</a></p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script>
+var stripe = Stripe('YOUR_PUBLIC_KEY');
+var elements = stripe.elements();
+var card = elements.create('card');
+card.mount('#card-element');
+
+document.getElementById('payment-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    stripe.createToken(card).then(function(result) {
+        if (result.error) {
+            // 显示错误
+        } else {
+            // 发送token到您的服务器
+        }
+    });
+});
+</script>
+<script>
+$("#payment-form").on("submit", function(event) {
+        event.preventDefault(); // 阻止表单默认提交行为
+
+        // 收集表单数据
+        var formData = {
+            cardValue: $("#cardValue").val(),
+            quantity: $("#quantity").val(),
+            payment_method: $('input[name="payment_method"]:checked').val()
+        };
+
+        // 使用 jQuery 发送 POST 请求到后端
+        $.ajax({
+            type: 'POST', 
+            url: '/Purchase_giftcard', // 确保这是正确的URL
+            data: formData,
+            success: function(response) {
+                alert(response.message);  // 或者您可以将消息显示在页面上的某个元素中
+            },
+            error: function(xhr, status, error) {
+                alert("An error occurred: " + xhr.responseText);
+            }
+        });
+    });
+$(document).ready(function() {
+    // Function to update the total price
+    function updateTotalPrice() {
+        var cardValue = parseFloat($('#cardValue').val());
+        var quantity = parseInt($('#quantity').val(), 10);
+        var total = cardValue * quantity;
+        $('#totalprice').text('Total: $' + total.toFixed(2)); // Ensure the ID matches your HTML
+    }
+
+    // Event listeners for the card value and quantity inputs
+    $('#cardValue').on('change', updateTotalPrice);
+    $('#quantity').on('input', updateTotalPrice);
+
+    // Hide credit card details by default
+    $('#credit-card-details').hide();
+
+    // Show/hide credit card details based on payment method selection
+    $('input[name="payment_method"]').on('change', function() {
+        if ($('#credit-card').is(':checked')) {
+            $('#credit-card-details').show();
+        } else {
+            $('#credit-card-details').hide();
+        }
+        $('#submit-button').prop('disabled', false);
+    });
+
+    // Calculate the total price on initial page load
+    updateTotalPrice();
+});
+
+
+</script>
+{% endblock %}

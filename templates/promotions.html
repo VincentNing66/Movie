@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4 text-light">
+    <h2 class="mb-4">Promotions</h2>
+    <div class="row">
+        {% for promotion in promotions %}
+        <div class="col-md-6 mb-4 bg-black">
+            <div class="card bg-black text-light h-200">
+                <div class="col-lg-4 ">
+                <img src="{{ promotion[6] }}" class="card-img-custom" alt="{{ promotion[0] }}">
+                </div>
+                <div class="card-body">
+                    <p>PromoCode</p>
+                    <h5 class="card-title">{{ promotion[0] }}</h5>
+                    <p class="card-text">Discount: {{ promotion[1]|int }}%</p>
+                    <p class="card-text">Valid from <span class="formatted-date">{{ promotion[2] }}</span> to <span class="formatted-date">{{ promotion[3]}}</span></p>
+                    <!--{% if promotion[4] %}
+                    <p class="card-text">Week Days: {{ promotion[4] }}</p>
+                    {% endif %}-->
+                    
+                    <p class="card-text">Specific Dates: {{ promotion[5] }}</p>
+               
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+

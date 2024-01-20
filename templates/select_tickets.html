@@ -1,0 +1,239 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container text-light">
+
+    <h1>Select Tickets</h1>
+    <div>
+        <h3>{{ session_info.MovieTitle }}</h3>
+    </div>
+    <p>Cinema:{{ session_info.CinemaName }}</p>
+    <p>Date:<span class="formatted-date">{{ session_info.SessionDateTime }}</span></p> <p id="weekday"></p>
+    <p>Time : <span class="session-datetime">{{ session_info.SessionDateTime }}</span></p>
+    <p id="selected-seats">Selected Seat Number: {{ selected_seats }}</p>
+    <!-- <p>Available Seat Number:  {{ session_info.SeatAvailability }}</p>-->
+    </div>
+        
+  <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-aside">
+            <div class="modal-content bg-black text-light">
+                <div class="modal-header border-bottom-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <!-- Modal Body -->
+                <div class="modal-body">
+                <!-- Login Form -->
+                    <div id="loginForm">                   
+                        <form action="/login" method="post">
+                            <div class="mb-3 ">
+                                
+                                <input type="text" class="form-control bg-black text-light custom-placeholder" id="Username" name="Username" placeholder="Username"required>
+                            </div>
+                            <div class="mb-3">
+                                <input type="Password" class="form-control bg-black text-light custom-placeholder" id="Password" name="Password"  placeholder="Password" required >
+                            </div>
+                            <input type="hidden" name="next" id="loginNext" value="">
+                            <button type="submit" class="btn btn-danger">SIGN IN</button>
+                        </form>
+                        <p class="mt-3">Not a member? <a href="#" class="text-danger" id="switchToJoin">Join Us</a></p>
+                    </div>
+
+                    
+                    
+                <!-- Registration Form -->
+                    <div id="joinForm" style="display: none;">
+                        <form action="/register" method="post">
+                            <div class="row justify-content-center">
+                                <div class="modal-content bg-black text-light">
+                                    <div class="mb-3">
+                                        
+                                        <input type="text" class="form-control bg-black text-light custom-placeholder" id="Username" name="Username" placeholder="Username*" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <input type="Password" class="form-control bg-black text-light custom-placeholder" id="Password" name="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}"  placeholder="Password*" required required title="Password must be at least 8 characters long, including an uppercase letter, a lowercase letter, a number, and a special character.">
+                                    </div>
+                                    <div class="mb-3">
+                                        
+                                        <input type="text" class="form-control bg-black text-light custom-placeholder" id="FirstName" name="First_name" placeholder="First Name*" required>
+                                    </div>
+                                    <div class="mb-3">
+                                    
+                                        <input type="text" class="form-control bg-black text-light custom-placeholder" id="LastName" name="Last_name" placeholder="Last Name*" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        
+                                        <input type="date" class="form-control bg-black text-light custom-placeholder" id="Birthdate" name="Birthdate" placeholder="Birthdate*" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        
+                                        <input type="tel" class="form-control bg-black text-light custom-placeholder" id="con" name="con" pattern="[0-9]{8,15}"  placeholder="Contact*" required title="Contact number must be 8 to 15 digits long.">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 其他 Customer 表需要的字段 -->
+                            <button type="submit" class="btn btn-danger ">Join</button>
+                        </form>
+                    
+                        <p class="mt-3">Already a member? <a href="#" class="text-danger"  id="switchToLogin">Login</a></p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="container text-light">
+    <div class="ticket-selection-container ml-3 text-light">
+        <form id="ticketSelectionForm" action="{{ url_for('select_tickets') }}" method="post">
+            {% for ticket_type, price in ticket_prices.items() %}
+            <div class="row align-items-center mb-3">
+                <div class="col-md-2">
+                    <label for="ticket-{{ ticket_type }}">{{ ticket_type }}  </label>
+                </div>
+                <div class="col-md-2">
+                    <label for="ticket-{{ ticket_type }}"> (${{ price }} each): </label>
+                </div>
+                <div class="col-md-1">
+                    <input type="number" id="ticket-{{ ticket_type }}" name="{{ ticket_type }}" value="0" min="0" class="ticket-quantity form-control bg-black text-light form-control bg-black text-light-sm" data-price="{{ price }}">
+                </div>
+                
+            </div>
+            {% endfor %}
+            <div class="form-group col-lg-6">
+                <p>Have a promo code? Enter it above to receive a discount on your tickets.</p>
+                <div class="form-group col-lg-4">
+                    <label for="promoCode">Promotion Code:</label>
+                    <input type="text" name="promo_code" class ="form-control bg-black text-light" placeholder="Enter promo code">
+                </div>
+            </div>
+
+            <div class="total-container">
+                Total: $<span id="totalPrice">0.00</span>
+                <input type="hidden" name="total_price" id="totalPriceInput" value="0.00">
+            </div>
+            <button type="submit" class="btn btn-danger">Proceed to Summary</button>
+        </form>
+    </div>
+    </div>
+</div>
+<script>
+    var selectedSeatsCount = {{ session.get('selected_seats', [])|length }}; // 获取已选座位的数量
+
+    function updateTotal() {
+        let total = 0;
+        document.querySelectorAll('.ticket-quantity').forEach(function(input) {
+            let quantity = parseInt(input.value) || 0;
+            let price = parseFloat(input.getAttribute('data-price'));
+            total += quantity * price;
+        });
+
+        document.getElementById('totalPrice').textContent = total.toFixed(2);
+        document.getElementById('totalPriceInput').value = total.toFixed(2);
+    }
+
+    function checkTicketsMatchSeats() {
+        let totalQuantity = 0;
+        document.querySelectorAll('.ticket-quantity').forEach(function(input) {
+            totalQuantity += parseInt(input.value) || 0;
+        });
+
+        // 确保所选票数等于已选座位数
+        return totalQuantity === selectedSeatsCount;
+    }
+
+    document.getElementById('ticketSelectionForm').addEventListener('submit', function(event) {
+        if (!checkTicketsMatchSeats()) {
+            event.preventDefault(); // 阻止表单提交
+            alert('The number of selected tickets must match the number of selected seats.');
+        }
+    });
+
+    document.querySelectorAll('.ticket-quantity').forEach(function(input) {
+        input.addEventListener('change', updateTotal);
+    });
+
+    // 页面加载时调用 updateTotal
+    window.onload = updateTotal;
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 检查用户是否已登录
+    var isLoggedIn = {{ 'true' if current_user.is_authenticated else 'false' }};
+    
+    var buttons = document.querySelectorAll('button');
+    var proceedButton = Array.from(buttons).find(button => button.textContent.trim() === 'Proceed to Summary');
+
+    if (proceedButton) {
+        proceedButton.addEventListener('click', function(e) {
+            if (!isLoggedIn) {
+                e.preventDefault();
+                alert('Please log in to proceed.');
+            }
+        });
+    }
+
+    // 切换到注册表单
+    document.getElementById('switchToJoin').addEventListener('click', function() {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('joinForm').style.display = 'block';
+    });
+
+    // 切换回登录表单
+    document.getElementById('switchToLogin').addEventListener('click', function() {
+        document.getElementById('loginForm').style.display = 'block';
+        document.getElementById('joinForm').style.display = 'none';
+    });
+});
+</script>
+<script>
+
+// 获取日期字符串，例如 "2024-01-02"
+    var dateString = "{{ session_info.SessionDateTime }}";
+
+    // 将日期字符串转换为 JavaScript Date 对象
+    var dateObj = new Date(dateString);
+
+    // 创建一个数组来存储星期几的名称
+    var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+    // 获取日期对应的星期几
+    var weekday = weekdays[dateObj.getDay()];
+
+    // 在HTML中插入星期几的信息
+    document.getElementById("weekday").innerHTML = "" + weekday;
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var showLoginModal = {{ 'true' if session.get('show_login_modal') else 'false' }};
+    if (showLoginModal) {
+        new bootstrap.Modal(document.getElementById('loginModal')).show();
+    }
+
+    // 清除显示登录模态框的标记
+    fetch('/clear-login-modal-flag');
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var form = document.getElementById('ticketSelectionForm');
+
+    form.addEventListener('submit', function(event) {
+        var promoCode = document.querySelector('[name="promo_code"]').value;
+
+        // 检查Promotion Code字段是否为空
+        if (!promoCode) {
+            var hasPromoCode = confirm("Do you have a Promotion Code?      Confirm :Yes   Cancel: No " );
+            if (hasPromoCode) {
+                // 用户点击“是”，阻止表单提交并让用户输入优惠码
+                event.preventDefault();
+                alert('Please enter your Promotion Code.');
+            }
+            // 用户点击“否”，继续提交表单
+        }
+    });
+});
+</script>
+
+
+{% endblock %}

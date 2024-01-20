@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container text-light bg-black">
+    <h1>Cinemas</h1>
+    <div class="row">
+        {% for cinema in cinemas %}
+        <div class="col-md-4">
+            <div class="card h-100 text-light bg-black"> <!-- Use h-100 for equal height cards -->
+                
+                <img src="{{ cinema.image_path }}" alt="{{ cinema.CinemaName }} ">
+                
+                <h5 class="card-title">{{ cinema.CinemaName }}</h5>
+                <a href="{{ url_for('cinema_detail', cinema_id=cinema.CinemaID) }}" class="btn btn-primary">More details</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

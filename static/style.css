@@ -1,0 +1,668 @@
+html, body {
+    height: 100%; /* 为了确保页面的高度至少和视口一样高 */
+    margin: 0;
+    padding: 0;
+    background-color: rgba(0,0,0,0); /* 设置背景色，这里以黑色为例 */
+}
+
+
+/* 默认样式，适用于大屏幕 */
+.img-fluid {
+    max-width: auto ;/* 或您希望的最大宽度 */
+    height: 60px ;
+
+}
+
+/* 小屏幕（例如小于768px宽）样式 */
+@media (max-width: 767.98px) {
+    .img-fluid {
+        max-width: 50%; /* 在小屏幕上缩小图片尺寸 */
+        height: auto;
+    }
+}
+
+
+
+.container-fluid {
+    min-height: 100%; /* 确保即使内容不足，容器也至少和视口一样高 */
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+/* 右侧内容区域的样式 */
+.col-md-10 {
+    background-color: #000; /* 这里设置您想要的背景色 */
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+/* 修改 z-index */
+@media(max-width: 768px) {
+    .navbar {
+        z-index: 10; /* 保证导航栏在最上层 */
+        
+        right: 10px;
+        width: 95%;
+
+    }
+}
+.navbar {
+    .dash__nav {
+        box-sizing: border-box;
+        z-index: 7;
+    }
+}
+.modal-dialog-aside {
+    max-width: 400px; /* 控制模态框宽度 */
+    margin: auto; /* 中间对齐 */
+}
+
+@media (min-width: 641px) and (max-width: 1680px){
+    .hero-slide__media {
+        height: 480px;
+    }
+}
+@media (min-width: 1241px){
+.hero-slide__media {
+    border-radius: 4px;
+    box-shadow: 0 0 8px #0a0a0a;
+ }   
+}
+.hero-slide__media {
+    position: relative;
+    overflow: hidden;
+    z-index: 0;
+}
+/* 控制模态框出现在页面的右侧 */
+@media (min-width: 576px) {
+    .modal-dialog-aside {
+        margin-right: 0;
+        margin-left: auto;
+    }
+}
+
+/* 模态框的背景和文本样式 */
+.modal-content.bg-dark.text-light {
+    background-color: #000; /* 暗背景 */
+    color: #fff; /* 白色文本 */
+}
+
+/* 输入框的样式 */
+.modal-content .form-control {
+    background-color: #555; /* 暗色输入框 */
+    border: none;
+    color: #fff; /* 白色文本 */
+}
+
+/* 按钮样式 */
+.modal-content .btn-danger {
+    background-color: #E50914; /* 红色按钮 */
+    border: none;
+    width: 100%; /* 完整宽度按钮 */
+}
+
+/* 链接样式 */
+.modal-content a.text-danger {
+    color: #E50914; /* 红色链接 */
+}
+input.custom-placeholder::placeholder {
+    color: #d4cfcf; /* Your preferred placeholder text color */
+    opacity: 1;
+  }
+.dropdown-item {
+    color: #ffffff; /* Text color */
+    background-color: transparent; /* No background color for a transparent look */
+    border: none; /* No borders */
+    padding: 0.75rem 1rem; /* Padding for top and bottom, left and right */
+    margin-bottom: 0.25rem; /* Spacing between items */
+    border-radius: 0; /* No rounded corners for a sharp look */
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+    color: #ffffff; /* Text color for hover and focus */
+    background-color: #343a40; /* Slightly lighter background on hover and focus for contrast */
+    border-color: #343a40; /* Matching border color if needed */
+}
+
+/* Since you have a black background, ensure the dropdown menu background matches */
+.dropdown-menu {
+    background-color: #000000; /* Match the dark background of your site */
+    border: none; /* No border for the dropdown */
+}
+
+/* Adjustments for the dropdown to use full width if needed */
+.dropdown-menu-end {
+    right: 0;
+    left: auto;
+}
+
+
+.carousel-inner {
+    position: relative;
+    display: flex;
+    padding-left: 0px; /* 这应该等于 'Previous' 按钮的宽度 */
+    padding-right: 0px; /* 这应该等于 'Next' 按钮的宽度 */
+    transition: transform 0.5s ease-in-out; 
+   
+    overflow: hidden;
+    z-index: 0;
+}
+.carousel-inner img {
+    max-width: auto;
+    height: auto;
+     /* 调整图片的最大宽度，根据需要进行调整 */
+}
+
+.carousel-inner img {
+    max-width: auto;
+    height: auto;
+     /* 调整图片的最大宽度，根据需要进行调整 */
+}
+
+.date-selection {
+    position: relative;
+    
+}
+.carousel-control-prev, .carousel-control-next {   
+    top: 50%;
+    transform: translateY(-50%);    
+}
+.custom-carousel .carousel-control-prev{
+    left: 0; 
+    right: auto
+}
+
+.custom-carousel .carousel-control-next {
+    right: 0; /* 设置为0或适当的负值使按钮紧贴日期按钮组的右侧 */
+}
+
+/* 调整按钮大小 */
+/* 自定义样式以浮动标题文字在图片之上 */
+.custom-carousel .carousel-title {
+    position: absolute; /* 设置标题元素的位置为绝对定位 */
+    bottom:  40px; /* 调整标题元素与顶部的距离，根据需要进行调整 */
+    left: 20px; /* 调整标题元素与左侧的距离，根据需要进行调整 */
+    background: transparent; /* 可选：设置背景颜色，以使文字更易读 */
+    color: white; /* 可选：设置文字颜色，以适应背景 */
+    padding: 10px; /* 可选：添加内边距以改进文字显示 */
+    z-index: 1; /* 设置堆叠顺序，以确保文字浮在图片之上 */
+}
+/* 自定义样式以浮动标题文字在图片之上 */
+.custom-carousel .carousel-now-showing {
+    display: inline-flex;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    border-radius: 2px;
+    position: absolute; /* 设置标题元素的位置为绝对定位 */
+    bottom: 110px; /* 调整标题元素与顶部的距离，根据需要进行调整 */
+    left: 30px; /* 调整标题元素与左侧的距离，根据需要进行调整 */
+    background: #f5cc50; /* 可选：设置背景颜色，以使文字更易读 */
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size:10px;
+    color: #000;
+    padding: 2px 4px; /* 可选：添加内边距以改进文字显示 */
+    border-radius: 2px;
+    z-index: 1; /* 设置堆叠顺序，以确保文字浮在图片之上 */
+}
+.container, .container-fluid, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+    --bs-gutter-x: 1.5rem;
+    --bs-gutter-y: 0;
+    width: 100%;
+    
+    margin-right: auto;
+    margin-left: auto;
+}
+.carousel-control-prev-icon, .carousel-control-next-icon {
+    width: 40px;
+    height: 40px;
+    margin-top: -20px;
+    border-radius: 4px;
+    left:-30px;
+    right: 0;
+}
+.carousel-item {
+    margin-right: 10px; /* 如果需要，在日期按钮之间添加空间 */
+    @media screen and (max-width: 800px) {
+        margin-right: 0px;
+    }
+}
+.now-showing, .coming-soon {
+    margin: 20px;
+    @media screen and (max-width:800px) {
+        margin: 0px;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    #left-container {
+        padding: 0 0 0 0;
+    }
+}
+
+.movie-carousel {
+    display: flex;
+    overflow-x: auto;
+    padding: 10px;
+    gap: 20px;
+}
+@media (max-width: 575.98px) {
+    .movie-carousel img {
+        max-width: 200px;
+        height: auto;
+        border-radius: 10px;
+    }
+}
+.movie-carousel img {
+    max-width: 200px;
+    height: auto;
+    border-radius: 10px;
+}
+
+.movie-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.movie-list img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+.carousel-container {
+    width: 70%; /* 或您希望的任何宽度 */
+    max-width: 1000px; /* 最大宽度，可调整 */
+    margin: 0; /* 居中显示 */
+    overflow: hidden; /* 隐藏溢出部分 */
+}
+
+.carousel-item img {
+    width: 100%; /* 使图片填满容器宽度 */
+    height: 600px; /* 保持图片纵横比 */
+    object-fit: cover;
+}
+
+
+
+.form-control::placeholder {
+    color: #6c757d; /* This is the color for .text-secondary in Bootstrap 5 */
+    opacity: 1; /* Bootstrap 4 uses 0.5 opacity by default */
+}
+
+.nav-tabs .nav-link {
+    background-color: #000; /* Black background */
+  }
+  
+  .nav-tabs .nav-link.active {
+    color: #fff; /* White text for active tab */
+  }
+  
+  .tab-content > .tab-pane {
+    background-color: #000; /* Black background for tab content */
+  }
+  
+  /* You may not need this if Bootstrap's text-light and text-secondary classes are working as expected */
+  .tab-content > .tab-pane.active {
+    color: #fff; /* White text for active tab content */
+  }
+  
+  .tab-content > .fade {
+    color: #6c757d; /* Bootstrap's default color for text-secondary */
+  }
+  .movie-image {
+    width: auto; /* This will make the image responsive to the card width */
+    height: auto; /* This maintains the aspect ratio of the image */
+    max-height: 200px; /* Adjust the max-height as needed */
+    border-radius :5%;
+  }
+  @media (max-width: 575.98px) {
+    .movie-image {
+        max-height: 150px; /* 在小屏幕上减小最大高度 */
+        /* 这里可以添加其他小屏幕专用样式 */
+    }
+}
+  .card-img-top {
+    width: 40%; /* This will make the image responsive to the card width */
+    height: auto; /* This maintains the aspect ratio of the image */
+    max-height: 200px; /* Adjust the max-height as needed */
+}
+.date-btn:not(:last-child) {
+    margin-right: 5px;
+}
+.date-btn.active, .date-btn:hover {
+    background-color: #d9534f; /* Bootstrap's btn-danger background color */
+    border-color: #d43f3a; /* Bootstrap's btn-danger border color */
+    color: white;
+}
+.btn-dark {
+    background-color: #343a40; /* Bootstrap's btn-dark background color */
+    border-color: #343a40; 
+    color: white;
+    }
+
+.seating-map_draggable {
+        width: 100%;
+        margin-left: 0%;
+        margin-right: 0%;
+        box-sizing: border-box;
+    }   
+.seating-map_screen {
+    position: relative;
+    border-top: 3px solid #171212;
+}
+.seating-map_screen-text {
+    position: absolute;
+    top: 50%;
+    left: 40%;
+    display: block;
+    font-family: montserrat;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #999;
+    transform: translateX(-50%) translateY(-50%);
+}
+ 
+.seating-map_screen-background {
+        width:50%;
+        display: block;
+        border-top: 30px solid #171212;
+        border-left: 20px solid transparent;
+        border-right: 20px solid transparent;
+    }
+.seating-map_overflow {
+    overflow: hidden;
+    transition: border-radius .4s;
+}
+.seat-chart {
+    display: flex;
+    flex-direction: column;
+    
+}
+.seat-row {
+    display: flex;
+    align-items: center;
+}
+.seat-row-label {
+    margin-right: 10px;
+}
+.seat-container {
+    position: relative;
+    margin: 5px;
+}
+
+.seat-checkbox {
+    display: none; /* Hide the default checkbox */
+}
+.seat {
+    display: inline-block;
+    width: 40px; /* Set width of the seat */
+    height: 40px; /* Set height of the seat */
+    background-color: #fff; /* Default color for available seats */
+    cursor: pointer;
+    border: 1px solid #000;
+    border-radius: 15%;
+}
+.seat:before {
+    content: "";
+    position: absolute;
+    width: 40px; /* Set width of the seat */
+    height: 40px;
+    background-color: red;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out;
+    border-radius: 15%;
+}
+.seat-checkbox:checked + .seat:before {
+    opacity: 1; /* Make the red color visible when the checkbox is checked */
+}
+
+.unavailable {
+    background-color: gray;
+    cursor: not-allowed;
+    border-radius: 15%;
+}
+seat-checkbox:checked + label.available {
+    background-color: red; /* Selected available seat */
+    border-radius: 15%;
+}
+
+.seat-checkbox:disabled + label.unavailable {
+    background-color: gray; /* Unavailable seat */
+}
+
+
+.ticket-type {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.quantity-selector {
+    display: flex;
+    align-items: center;
+}
+
+.quantity-selector button {
+    width: 30px;
+    height: 30px;
+    /* Add styles for your buttons */
+}
+
+.quantity-selector input {
+    width: 50px;
+    text-align: center;
+    /* Add styles for your input */
+}
+
+.total-container {
+    margin-top: 20px;
+    /* Add additional styling for the total container */
+}
+
+/* 日期选择器的CSS样式 */
+#date-picker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#date-picker button {
+    padding: 5px 10px;
+    margin: 0 10px;
+    background-color: #f00;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+#date-picker #date-display {
+    padding: 5px 10px;
+    background-color: #000;
+    color: #fff;
+}
+.date-slider {
+    display: flex;
+    align-items: center;
+    overflow-x: auto; /* 允许横向滚动 */
+    white-space: nowrap; /* 保持按钮在一行 */
+  }
+  
+  .date-buttons {
+    display: inline-flex; /* 使按钮水平排列 */
+  }
+  
+  .slide-arrow {
+    background: none;
+    border: none;
+    color: white; /* 或者您页面的主题色 */
+    font-size: 2rem; /* 调整为合适的大小 */
+    cursor: pointer;
+  }
+  
+  /* 额外的样式，以确保按钮美观 */
+  .date-slider button {
+    margin: 0 5px; /* 间距 */
+  }
+  
+  .date-slider .btn {
+    padding: 5px 10px; /* 内填充 */
+    margin-right: 5px; /* 右边距 */
+    background-color: #333; /* 背景色 */
+    color: white; /* 字体颜色 */
+    border: none; /* 无边框 */
+    cursor: pointer; /* 手型光标 */
+  }
+  
+  
+  .stripe-input {
+    background-color: #333;  /* 深色背景 */
+    color: #fff;            /* 浅色文字 */
+    padding: 10px;          /* 内部间距 */
+    margin-bottom: 10px;    /* 每个元素底部外间距 */
+}
+
+/* 调整Stripe元素的字体大小 */
+.StripeElement {
+    font-size: 25px;       /* 增大字体大小 */
+}
+
+/* 调整按钮样式 */
+#submit {
+    background-color: #04AA6D; /* 按钮背景色 */
+    color: white;              /* 按钮文字颜色 */
+    padding: 10px 20px;        /* 按钮内部间距 */
+    border: none;              /* 移除边框 */
+    cursor: pointer;           /* 将鼠标样式改为手型 */
+}
+
+#submit:hover {
+    background-color: #45a049; /* 按钮悬停时的背景色 */
+}
+.seat-status-explanation {
+    display: flex;
+  
+    align-items: center;
+    margin-top: 20px; /* 调整间距 */
+}
+
+.seat-status {
+    display: flex;
+    align-items: center;
+    margin-right: 70px; /* 调整间距 */
+}
+
+.seat-dot {
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    margin-right: 5px;
+    display: inline-block;
+}
+
+.available {
+    background-color: white;
+    border: 1px solid black; /* 为白色圆点添加边框 */
+}
+
+.reserved {
+    background-color: gray;
+}
+
+.selected {
+    background-color: red;
+}
+
+.area-table-layout {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 三列布局 */
+    grid-gap: 10px; /* 区域之间的间隔 */
+    margin-bottom: 20px; /* 区域表下方的间隔 */
+}
+
+.area-table-layout .area-row {
+    display: contents; /* 让area-row不影响网格布局 */
+}
+
+.area-table-layout .area {
+    background-color: #f0f0f0; /* 区域的背景颜色 */
+    text-align: center; /* 文字居中 */
+    padding: 20px; /* 内边距 */
+    border: 1px solid #d3d3d3; /* 边框样式 */
+    cursor: pointer; /* 鼠标悬停时的手型图标 */
+    transition: background-color 0.3s ease; /* 背景颜色的过渡效果 */
+}
+
+.area-table-layout .area:hover {
+    background-color: #678be4; /* 鼠标悬停时的背景颜色 */
+}
+.area.selected {
+    /* 区域被选中时的样式 */
+    background-color: #f10808; /* 选中状态的背景颜色 */
+}
+
+  /* 选择日期按钮的样式 */
+input[type="date"]::-webkit-calendar-picker-indicator {
+filter: invert(1); /* 将日历图标颜色反转为白色 */
+}
+
+.card-img-container {
+    text-align: center; /* Center the image */
+    padding: 15px; /* Add some padding around the image */
+}
+
+.card-img-custom {
+    width: auto; /* Maintain the image's aspect ratio */
+    max-height: 200px; /* Set a maximum height for the image */
+    display: inline-block; /* Ensure it's inline */
+}
+.bold-text {
+    font-weight: bold; /* 设置粗体 */
+}
+
+
+.input-group {
+    display: flex;
+    align-items: center;
+}
+
+.input-group button {
+    cursor: pointer;
+}
+
+
+/* 默认情况下隐藏侧边栏 */
+
+
+
+
+    .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        justify-content: space-between;
+        align-items: center;
+        padding: 13px 13px;
+        background-color: #000000;
+        z-index: 1250;
+    }
+
+.navbar-collapse {
+    /* 设置为绝对定位 */
+   
+    left: 100%;; /* 从左侧开始 */
+    width: 100%; /* 设置下拉菜单的宽度与导航栏相同 */
+    background-color: #000000; /* 可选：设置背景色以便突出显示 */
+    z-index: 1000; /* 确保下拉菜单在其他内容之上 */
+}
+
+
+  
+  input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(1); /* 将日历图标颜色反转为白色 */
+    }
+ 

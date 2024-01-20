@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container text-light  col-md-4 col-lg-6">
+    <h2>Ticket Details</h2>
+    <p>Movie Title: {{ ticket.MovieTitle }}</p>
+    <p>Cinema: {{ ticket.CinemaName }}</p>
+    <p>Date: <span class="formatted-date">{{ ticket.SessionDateTime }}<span></p>
+    <p>Time: <span class="session-datetime">{{ ticket.SessionDateTime }}<span></p>
+    <p>Ticket Number: {{ ticket.TicketNumber }}</p>
+    <p >Seat Number: {{ ticket.SeatNumber }}</p>
+</div>
+<div class="container bg-lightcol-md-6 col-lg-4" >
+    <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code"style="width: 250px;">
+</div>
+{% endblock %}

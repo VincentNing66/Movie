@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="vh-100 px-0 bg-black">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <h2 class="text-center text-light mt-4">Update {{ UserType }}</h2>
+                {% if error %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endif %}
+                
+                <form method="post" onsubmit="return validateForm()">
+                    <div class="mb-3">
+                        <label for="First_name" class="form-label text-light">First Name</label>
+                        <input type="text" class="form-control bg-black text-light" id="First_name" name="First_name" value="{{ user.First_name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Last_name" class="form-label text-light">Last Name</label>
+                        <input type="text" class="form-control bg-black text-light" id="L'ast_name" name="Last_name" value="{{ user.Last_name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Con" class="form-label  text-light">Contact</label>
+                        <input type="tel" class="form-control text-light bg-black" id="Con" name="Con"pattern="[0-9]{8,15}"  value="{{ user.Con }}" required title="Contact number must be 8 to 15 digits long.">
+                    </div>
+                    {% if UserType == 'Customer' %}
+                        <div class="mb-3">
+                            <label for="Birthdate" class="form-label  text-light">Birthdate</label>
+                            <input type="date" class="form-control bg-black text-light" id="Birthdate" name="Birthdate" value="{{ user.Birthdate }}" required>
+                        </div>
+                    {% else %}
+                        <div class="mb-3">
+                            <label for="Department" class="form-label  text-light">Department</label>
+                            <input type="text" class="form-control bg-black text-light" id="Department" name="Department" value="{{ user.Department }}" required>
+                        </div>
+                    {% endif %}
+                    <div class ="row">
+                    <div class="col-md-4 mb-2">
+                        <button type="submit" class="btn btn-primary  text-light">Update {{ UserType }}</button>    
+                    </div>  
+                    {% if session['UserType'] in ['Admin', 'Manager'] %}
+                        <div class="col-md-4 mb-2">
+                            <a href="{{ url_for('manage_user', UserType='Staff') }}" class="btn btn-secondary" style="width: 200px;">Manage Staff</a>
+                        </div>  
+                    {% endif %}
+                    {% if session['UserType'] == 'Admin' %}
+                        <div class="col-md-4 mb-2">
+                            <a href="{{ url_for('manage_user', UserType='Manager') }}" class="btn btn-secondary" style="width: 200px;">Manage Manager</a>
+                        </div>  
+                    {% endif %}
+                     </div> 
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Left Sidebar -->
+        <!-- This part is already in your base template -->
+
+        <!-- Right Content Area -->
+        <div class="col">
+            <!-- Tabs for Now Showing and Coming Soon -->
+            <ul class="nav nav-tabs bg-black text-light">
+                <li class="nav-item">
+                    <a class="nav-link active bg-black text-light " id="now-showing-tab" data-bs-toggle="tab" href="#nowShowing">Now Showing</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link bg-black text-light" id="coming-soon-tab" data-bs-toggle="tab" href="#comingSoon">Coming Soon</a>
+                </li>
+                </ul>
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <div class="tab-pane fade show active bg-black text-light" id="nowShowing">
+                    <div class="row">
+                        {% for movie in now_showing_movies %}
+                            <div class="row mb-3">
+                                <div class="col-lg-12">
+                                    <div class="card  mt-2 bg-black text-light">
+                                        <div class="row g-0">
+                                            <div class="col-sm-4 col-md-4 mt-1 ml-2">
+                                                <a href="{{ url_for('Movie_detail', MovieID=movie.MovieID) }}">
+                                                        <img src="{{ movie.image_path }}" class="movie-image" alt="{{ movie.Title }}">   
+                                                </a>
+                                            </div>
+                                            <div class="col-sm-8 col-md-8 ">
+                                                <div class="card-body text-light ">
+                                                    <h5 class="card-title">
+                                                        <a href="{{ url_for('Movie_detail', MovieID=movie.MovieID) }}" class="text-light">{{ movie.Title }}</a>
+                                                    </h5>
+                                                    <p class="card-text">{{ movie.Genre }} - {{ movie.Duration }} mins</p>
+                                                    <!-- <p class="card-text">Directed by: {{ movie.Director }}</p> -->
+                                                    <p class="card-text">Rating: {{ movie.Rating }}</p>
+                                                    <p class="card-text">Release Date: <span class="formatted-date">{{ movie.ReleaseDate }}</span></p>
+                                                    <p class="card-text"> {{ movie.Detail }}</p>
+                                                </div>
+                                            </div>   
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>          
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Coming Soon Movies -->
+                  <div class="tab-pane fade bg-black text-secondary" id="comingSoon">
+                    <div class="row">
+                        {% for movie in coming_soon_movies %}
+                            <div class="row mb-3">
+                                <div class="col-lg-12">
+                                    <div class="card  mt-2 bg-black text-light">
+                                        <div class="row g-0">
+                                        <div class="col-sm-4 col-md-4 mt-1-2">
+                                            <a href="{{ url_for('Movie_detail', MovieID=movie.MovieID) }}">
+                                                    <img src="{{ movie.image_path }}" class="movie-image" alt="{{ movie.Title }}">   
+                                            </a>
+                                        </div>
+                                        <div class="col-sm-8 col-md-8 ">
+                                            <div class="card-body text-light ">
+                                                <h5 class="card-title">
+                                                    <a href="{{ url_for('Movie_detail', MovieID=movie.MovieID) }}" class="text-light">{{ movie.Title }}</a>
+                                                </h5>
+                                                <p class="card-text">{{ movie.Genre }} - {{ movie.Duration }} mins</p>
+                                                <!-- <p class="card-text">Directed by: {{ movie.Director }}</p> -->
+                                                <p class="card-text">Rating: {{ movie.Rating }}</p>
+                                                <p class="card-text">Release Date: <span class="formatted-date">{{ movie.ReleaseDate }}</span></p>
+                                                <p class="card-text"> {{ movie.Detail }}</p>
+                                            </div>
+                                        </div>   
+                                    </div>
+                                </div>   
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Bootstrap's tab show event
+    $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (event) {
+        if (event.target.id === 'coming-soon-tab') { // Coming soon tab was clicked
+            $('#comingSoon').addClass('bg-black text-light').removeClass('text-secondary');
+            $('#nowShowing').removeClass('bg-black text-light').addClass('text-secondary');
+        } else if (event.target.id === 'now-showing-tab') { // Now showing tab was clicked
+            $('#nowShowing').addClass('bg-black text-light').removeClass('text-secondary');
+            $('#comingSoon').removeClass('bg-black text-light').addClass('text-secondary');
+        }
+    });
+});
+</script>

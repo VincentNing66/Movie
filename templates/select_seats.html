@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container col  text-light">
+    
+    <div>
+        <h3>{{ session_info.MovieTitle }}</h3>
+    </div>
+    <p>Cinema:{{ session_info.CinemaName }}</p>
+    
+    <p>Date:<span id="formatted-date">{{ session_info.SessionDateTime }}</span></p> <p id="weekday"></p>
+    <p>Time : <span class="session-datetime">{{ session_info.SessionDateTime }}</span></p>
+    <!-- <p>Available Seat Number:  {{ session_info.SeatAvailability }}</p>-->
+
+</div>
+        <!-- Seat chart -->     
+    <div class="seat-chart ">
+        <form action="{{ url_for('select_tickets') }}" method="POST">
+            <!-- Include the SessionID as a hidden field -->
+            <input type="hidden" name="session_id" value="{{ SessionID }}">
+
+            <!-- Seats -->
+            {% if session_info.CinemaID in [1, 2, 3] %}
+            <!-- Screen representation -->
+            <div class="seating_draggable">
+                <div class="seating-map_screen col-md-7">
+                    <span class="seating-map_screen-background"></span>
+                    <span class="seating-map_screen-text text-light">Screen</span>
+                </div>       
+            </div>
+            <div class="seats-container">
+                {% for row_num in 'ABCDEF' %}
+                <div class="seat-row">
+                    <!-- Row labels (letters) -->
+                    <div class="row-label text-light">{{ row_num }}</div>
+
+                    <!-- Seat selection -->
+                    {% for seat_num in range(1, 9) %}
+                    {% set seat_id = row_num ~ seat_num %}
+                    <div class="seat-container">
+                        <input type="checkbox" id="seat-{{ seat_id }}" name="seats" value="{{ seat_id }}"
+                            class="seat-checkbox"
+                            {% if not seating_chart.get(seat_id, True) %} disabled {% endif %}>
+                        <label for="seat-{{ seat_id }}" class="seat {% if not seating_chart.get(seat_id, True) %} unavailable {% endif %}"></label>
+                    </div>
+                    {% endfor %}
+                </div> 
+                {% endfor %}
+            {% elif session_info.CinemaID == 4 %}
+            <!-- Screen representation -->
+                <div class="seating_draggable">
+                    <div class="seating-map_screen col-md-8">
+                        <span class="seating-map_screen-background"></span>
+                        <span class="seating-map_screen-text text-light">Screen</span>
+                    </div>       
+                </div>
+                <div class="container mt-5">
+                    {% for row_num in 'ABCDEFGHIJ' %}
+                    <div class="seat-row text-light">
+                        <!-- Row labels (letters) -->
+                        <div class="row-label">{{ row_num }}</div>
+                        <!-- Seat selection -->
+                        {% for seat_num in range(1, 15) %}
+                        {% set seat_id = row_num ~ seat_num %}
+                        <div class="seat-container">
+                            <input type="checkbox" id="seat-{{ seat_id }}" name="seats" value="{{ seat_id }}"
+                                class="seat-checkbox"
+                                {% if not seating_chart.get(seat_id, True) %} disabled {% endif %}>
+                            <label for="seat-{{ seat_id }}" class="seat {% if not seating_chart.get(seat_id, True) %} unavailable {% endif %}"></label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div> 
+            {% endif %}
+            
+
+        <div class="container col seat-status-explanation text-light">
+            <div class="seat-status">
+                <span class="seat-dot available"></span>
+                <span>Available</span>
+            </div>
+            <div class="seat-status">
+                <span class="seat-dot reserved"></span>
+                <span>Reserved</span>
+            </div>
+            <div class="seat-status">
+                <span class="seat-dot selected"></span>
+                <span>Selected</span>
+            </div>
+        </div>
+
+                <!-- 其他HTML内容 -->
+
+            </div>
+            <div class="container col-md-7"> 
+            <button type="submit" class="btn btn-danger mt-3">Proceed</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var seatCheckboxes = document.querySelectorAll('input[name="seats"]');
+    seatCheckboxes.forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            var selectedSeats = Array.from(seatCheckboxes)
+                                    .filter(chk => chk.checked)
+                                    .map(chk => chk.value);
+            console.log(selectedSeats);
+            fetch('/save-selected-seats/{{ SessionID }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({selected_seats: selectedSeats})
+            });
+        });
+    });
+});
+
+    // 获取日期字符串，例如 "2024-01-02"
+    var dateString = "{{ session_info.SessionDateTime }}";
+
+    // 将日期字符串转换为 JavaScript Date 对象
+    var dateObj = new Date(dateString);
+
+    // 创建一个数组来存储星期几的名称
+    var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+    // 获取日期对应的星期几
+    var weekday = weekdays[dateObj.getDay()];
+
+    // 在HTML中插入星期几的信息
+    document.getElementById("weekday").innerHTML = "" + weekday;
+</script>
+
+{% endblock %}

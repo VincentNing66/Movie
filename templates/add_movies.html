@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container bg-black text-light">
+    <h2 class="text-center">Add Movie</h2>
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-6 col-md-6 col-lg-8">
+                <div class="bg-black text-light p-4 border rounded">
+                <form method="post" enctype="multipart/form-data">
+                    <!-- Movie Title -->
+                    <div class="mb-3">
+                        <label for="Title" class="form-label bg-black text-light">Title</label>
+                        <input type="text" class="form-control bg-black text-light"id="Title" name="Title" required>
+                    </div>
+                    <!-- Director -->
+                    <div class="row">
+                        <div class="col-md-6 bg-black text-light">
+                            <div class="mb-3">
+                                <label for="Director" class="form-label bg-black text-light">Director</label>
+                                <input type="text" class="form-control bg-black text-light"id="Director" name="Director" required>
+                            </div>
+                        </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                            <label for="Genre" class="form-label bg-black text-light">Genre</label>
+                            <input type="text" class="form-control bg-black text-light"id="Genre" name="Genre" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <!-- Duration -->
+                            <div class="mb-3">
+                                <label for="Duration" class="form-label bg-black text-light">Duration</label>
+                                <input type="number" class="form-control bg-black text-light"id="Duration" name="Duration" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                        <!-- Release Date -->
+                            <div class="mb-3">
+                                <label for="ReleaseDate" class="form-label bg-black text-light">Release Date</label>
+                                <input type="date" class="form-control bg-black text-light"id="ReleaseDate" name="ReleaseDate" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                        <!-- Rating -->
+                            <div class="mb-3">
+                                <label for="Rating" class="form-label bg-black text-light">Rating</label>
+                                <input type="text" class="form-control bg-black text-light"id="Rating" name="Rating" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <!-- Base Price -->
+                            <div class="mb-3">
+                                <label for="BasePrice" class="form-label bg-black text-light">Base Price</label>
+                                <input type="number" step="0.01" class="form-control bg-black text-light"id="BasePrice" name="BasePrice" required>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            
+                            <!-- Detail -->
+                            <div class="mb-3">
+                                <label for="Detail" class="form-label bg-black text-light">Detail</label>
+                                <textarea class="form-control bg-black text-light"id="Detail" name="Detail" required></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <!-- Movie Image -->
+                            <div class="mb-3 bg-black text-light">
+                                <label for="NewImagePath" class="form-label bg-black text-light">Add Image Path</label>
+                                <input type="text" class="form-control bg-black text-light" id="NewImagePath" name="new_image_path" value="{{ Movies.image_path }}" required>
+                            </div>
+                        </div>
+                    <!-- Submit Button -->
+                    <div>
+                    <button type="submit" class="btn btn-primary me-3 mb-3 mt-3">Add Movie</button>
+                    <a href="{{ url_for('manage_Movie') }}" class="btn btn-secondary me-3 mb-3 mt-3" style="width: 200px;">Manage Movies</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

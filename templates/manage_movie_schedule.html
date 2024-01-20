@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="bg-black text-light">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <h2 class="text-center text-brown mt-4">Manage Movie Schedules</h2>
+                
+                <div class="container mt-4">
+                    <div class="row justify-content-center">
+                        <div class="col-12 col-sm-6 col-md-6 col-lg-8">
+                            <div class="bg-black text-light p-4 border rounded">
+
+                                {% if error %}
+                                    <div class="alert alert-danger">{{ error }}</div>
+                                {% endif %}
+                                
+                                <!-- Movie Schedule Form -->
+                                <form method="post" enctype="multipart/form-data">
+                                    <!-- Select Movie -->
+                                    <input type="hidden" name="SessionID" id="SessionID" value="{{ session.SessionID if session else '' }}">
+                                    <div class="mb-3">
+                                        <label for="MovieID" class="form-label">Select Movie</label>
+                                        <select class="form-control bg-black text-light" id="MovieID" name="MovieID">
+                                            {% for movie in movies %}
+                                                <option value="{{ movie.MovieID }}" {% if session and session.MovieID == movie.MovieID %}selected{% endif %}>
+                                                    {{ movie.Title }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <!-- Select Cinema -->
+                                    <div class="mb-3">
+                                        <label for="CinemaID" class="form-label">Select Cinema</label>
+                                        <select class="form-control bg-black text-light" id="CinemaID" name="CinemaID" onchange="updateSeatAvailability()">
+                                            {% for cinema in cinemas %}
+                                                <option value="{{ cinema.CinemaID }}" data-capacity="{{ cinema.Capacity }}">{{ cinema.CinemaName }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <!-- Session DateTime -->
+                                    <div class="mb-3">
+                                        <label for="SessionDateTime" class="form-label">Session Date & Time</label>
+                                        <input type="datetime-local" class="form-control bg-black text-light" id="SessionDateTime" name="SessionDateTime" required>
+                                    </div>
+
+                                    <!-- Seat Availability -->
+                                    <div class="mb-3">
+                                        <label for="SeatAvailability" class="form-label">Seat Availability</label>
+                                        <input type="number" class="form-control bg-black text-light" id="SeatAvailability" name="SeatAvailability" value="{{ session.SeatAvailability }}" required>
+                                    </div>
+
+                                    <!-- Submit Button -->
+                                    <div class="mb-3">
+                                        <button type="submit" class="btn btn-primary me-3 mt-3 mb-3">Add/Update Schedule</button>
+                                        <a href="{{ url_for('session_manage') }}" class="btn btn-secondary me-3 mt-3 mb-3" style="width: 200px;">Manage Sessions</a>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+function updateSeatAvailability() {
+    var selectedCinema = document.getElementById('CinemaID');
+    var capacity = selectedCinema.options[selectedCinema.selectedIndex].getAttribute('data-capacity');
+    document.getElementById('SeatAvailability').value = capacity;
+}
+updateSeatAvailability();
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<body>
+    <div class="container-fluid mt-5 text-light">
+        <h2 class="mb-4">Report Dashboard</h2>
+        <div class="row me-4 ">
+            <div class="col-md-4 mb-4 mt-4">
+                <a href="{{ url_for('movie_sales_report_page') }}" class="btn btn-outline-light me-5">Movie Sales Report</a>
+            </div>
+            <div class="col-md-4 mb-4 mt-4">
+                <a href="{{ url_for('ticket_type_report_page') }}" class="btn btn-outline-light me-5">Ticket Type Report</a>
+            </div>
+            <div class="col-md-4 mb-4 mt-4">
+                <a href="{{ url_for('top_customers_report_page') }}" class="btn btn-outline-light me-5">Top Customers Report</a>
+            </div>
+            <div class="col-md-4 mb-4 mt-4">
+                <!--<a href="{{ url_for('sales_report_page') }}" class="btn btn-outline-light me-5">Sales Report</a>-->
+            </div>
+        </div> 
+    </div> 
+{% endblock %}

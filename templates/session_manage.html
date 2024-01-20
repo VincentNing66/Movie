@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container text-light mt-5">
+    <h2 class="text-center">Manage Movie Sessions</h2>
+        {% if user_type in ['Admin', 'Manager'] %}
+            <div class="col-md-11 d-flex justify-content-end">
+                <a href="{{ url_for('manage_movie_schedule') }}" class="btn btn-primary mb-3">Add New Session</a>
+            </div>
+        {% endif %}
+
+    <div class="list-group mt-4">
+        {% for movie in movies %}
+            <div class="list-group-item bg-black text-light list-group-item-action d-flex justify-content-between align-items-center">
+                {{ movie.Title }}
+                <a href="/movie_sessions/{{ movie.MovieID }}" class="btn btn-primary">View</a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="container mt-4" id="sessionsContainer" style="display: none;">
+    <h3>Movie Sessions</h3>
+    <div id="sessionsList">
+        <!-- Sessions will be loaded here -->
+    </div>
+</div>
+
+{% endblock %}
